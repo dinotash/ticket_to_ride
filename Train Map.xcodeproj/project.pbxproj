@@ -1,0 +1,515 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFD1D451E8000C97A1C /* AppDelegate.swift */; };
+		E27480001D451E8000C97A1C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFF1D451E8000C97A1C /* ViewController.swift */; };
+		E27480031D451E8000C97A1C /* Train_Map.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E27480011D451E8000C97A1C /* Train_Map.xcdatamodeld */; };
+		E27480051D451E8000C97A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E27480041D451E8000C97A1C /* Assets.xcassets */; };
+		E27480081D451E8000C97A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27480061D451E8000C97A1C /* Main.storyboard */; };
+		E27480131D451E8000C97A1C /* Train_MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27480121D451E8000C97A1C /* Train_MapTests.swift */; };
+		E274801E1D451E8000C97A1C /* Train_MapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E274801D1D451E8000C97A1C /* Train_MapUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E274800F1D451E8000C97A1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E2747FF21D451E8000C97A1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2747FF91D451E8000C97A1C;
+			remoteInfo = "Train Map";
+		};
+		E274801A1D451E8000C97A1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E2747FF21D451E8000C97A1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2747FF91D451E8000C97A1C;
+			remoteInfo = "Train Map";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E2747FFA1D451E8000C97A1C /* Train Map.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Train Map.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2747FFD1D451E8000C97A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E2747FFF1D451E8000C97A1C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Train_Map.xcdatamodel; sourceTree = "<group>"; };
+		E27480041D451E8000C97A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E27480071D451E8000C97A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		E27480091D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E274800E1D451E8000C97A1C /* Train MapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Train MapTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E27480121D451E8000C97A1C /* Train_MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Train_MapTests.swift; sourceTree = "<group>"; };
+		E27480141D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E27480191D451E8000C97A1C /* Train MapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Train MapUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E274801D1D451E8000C97A1C /* Train_MapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Train_MapUITests.swift; sourceTree = "<group>"; };
+		E274801F1D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E2747FF71D451E8000C97A1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E274800B1D451E8000C97A1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E27480161D451E8000C97A1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E2747FF11D451E7F00C97A1C = {
+			isa = PBXGroup;
+			children = (
+				E2747FFC1D451E8000C97A1C /* Train Map */,
+				E27480111D451E8000C97A1C /* Train MapTests */,
+				E274801C1D451E8000C97A1C /* Train MapUITests */,
+				E2747FFB1D451E8000C97A1C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E2747FFB1D451E8000C97A1C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E2747FFA1D451E8000C97A1C /* Train Map.app */,
+				E274800E1D451E8000C97A1C /* Train MapTests.xctest */,
+				E27480191D451E8000C97A1C /* Train MapUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E2747FFC1D451E8000C97A1C /* Train Map */ = {
+			isa = PBXGroup;
+			children = (
+				E2747FFD1D451E8000C97A1C /* AppDelegate.swift */,
+				E2747FFF1D451E8000C97A1C /* ViewController.swift */,
+				E27480041D451E8000C97A1C /* Assets.xcassets */,
+				E27480061D451E8000C97A1C /* Main.storyboard */,
+				E27480091D451E8000C97A1C /* Info.plist */,
+				E27480011D451E8000C97A1C /* Train_Map.xcdatamodeld */,
+			);
+			path = "Train Map";
+			sourceTree = "<group>";
+		};
+		E27480111D451E8000C97A1C /* Train MapTests */ = {
+			isa = PBXGroup;
+			children = (
+				E27480121D451E8000C97A1C /* Train_MapTests.swift */,
+				E27480141D451E8000C97A1C /* Info.plist */,
+			);
+			path = "Train MapTests";
+			sourceTree = "<group>";
+		};
+		E274801C1D451E8000C97A1C /* Train MapUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E274801D1D451E8000C97A1C /* Train_MapUITests.swift */,
+				E274801F1D451E8000C97A1C /* Info.plist */,
+			);
+			path = "Train MapUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E2747FF91D451E8000C97A1C /* Train Map */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E27480221D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train Map" */;
+			buildPhases = (
+				E2747FF61D451E8000C97A1C /* Sources */,
+				E2747FF71D451E8000C97A1C /* Frameworks */,
+				E2747FF81D451E8000C97A1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Train Map";
+			productName = "Train Map";
+			productReference = E2747FFA1D451E8000C97A1C /* Train Map.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E274800D1D451E8000C97A1C /* Train MapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E27480251D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapTests" */;
+			buildPhases = (
+				E274800A1D451E8000C97A1C /* Sources */,
+				E274800B1D451E8000C97A1C /* Frameworks */,
+				E274800C1D451E8000C97A1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E27480101D451E8000C97A1C /* PBXTargetDependency */,
+			);
+			name = "Train MapTests";
+			productName = "Train MapTests";
+			productReference = E274800E1D451E8000C97A1C /* Train MapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E27480181D451E8000C97A1C /* Train MapUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E27480281D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapUITests" */;
+			buildPhases = (
+				E27480151D451E8000C97A1C /* Sources */,
+				E27480161D451E8000C97A1C /* Frameworks */,
+				E27480171D451E8000C97A1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E274801B1D451E8000C97A1C /* PBXTargetDependency */,
+			);
+			name = "Train MapUITests";
+			productName = "Train MapUITests";
+			productReference = E27480191D451E8000C97A1C /* Train MapUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E2747FF21D451E8000C97A1C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Tom Curtis";
+				TargetAttributes = {
+					E2747FF91D451E8000C97A1C = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					E274800D1D451E8000C97A1C = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = E2747FF91D451E8000C97A1C;
+					};
+					E27480181D451E8000C97A1C = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = E2747FF91D451E8000C97A1C;
+					};
+				};
+			};
+			buildConfigurationList = E2747FF51D451E8000C97A1C /* Build configuration list for PBXProject "Train Map" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E2747FF11D451E7F00C97A1C;
+			productRefGroup = E2747FFB1D451E8000C97A1C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E2747FF91D451E8000C97A1C /* Train Map */,
+				E274800D1D451E8000C97A1C /* Train MapTests */,
+				E27480181D451E8000C97A1C /* Train MapUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E2747FF81D451E8000C97A1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E27480051D451E8000C97A1C /* Assets.xcassets in Resources */,
+				E27480081D451E8000C97A1C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E274800C1D451E8000C97A1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E27480171D451E8000C97A1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E2747FF61D451E8000C97A1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E27480001D451E8000C97A1C /* ViewController.swift in Sources */,
+				E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */,
+				E27480031D451E8000C97A1C /* Train_Map.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E274800A1D451E8000C97A1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E27480131D451E8000C97A1C /* Train_MapTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E27480151D451E8000C97A1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E274801E1D451E8000C97A1C /* Train_MapUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E27480101D451E8000C97A1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2747FF91D451E8000C97A1C /* Train Map */;
+			targetProxy = E274800F1D451E8000C97A1C /* PBXContainerItemProxy */;
+		};
+		E274801B1D451E8000C97A1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2747FF91D451E8000C97A1C /* Train Map */;
+			targetProxy = E274801A1D451E8000C97A1C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		E27480061D451E8000C97A1C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E27480071D451E8000C97A1C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E27480201D451E8000C97A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E27480211D451E8000C97A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E27480231D451E8000C97A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Train Map/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-Map";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E27480241D451E8000C97A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Train Map/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-Map";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		E27480261D451E8000C97A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Train MapTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Train Map.app/Contents/MacOS/Train Map";
+			};
+			name = Debug;
+		};
+		E27480271D451E8000C97A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Train MapTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Train Map.app/Contents/MacOS/Train Map";
+			};
+			name = Release;
+		};
+		E27480291D451E8000C97A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Train MapUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Train Map";
+			};
+			name = Debug;
+		};
+		E274802A1D451E8000C97A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Train MapUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Train Map";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E2747FF51D451E8000C97A1C /* Build configuration list for PBXProject "Train Map" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E27480201D451E8000C97A1C /* Debug */,
+				E27480211D451E8000C97A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E27480221D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train Map" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E27480231D451E8000C97A1C /* Debug */,
+				E27480241D451E8000C97A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		E27480251D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E27480261D451E8000C97A1C /* Debug */,
+				E27480271D451E8000C97A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		E27480281D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E27480291D451E8000C97A1C /* Debug */,
+				E274802A1D451E8000C97A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		E27480011D451E8000C97A1C /* Train_Map.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */,
+			);
+			currentVersion = E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */;
+			path = Train_Map.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = E2747FF21D451E8000C97A1C /* Project object */;
+}
