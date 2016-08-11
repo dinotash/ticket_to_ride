@@ -1,4 +1,168 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="untitled.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15F34" minimumToolsVersion="Automatic">
+    <entity name="Activity" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="routeEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="activities" inverseEntity="RouteEntry" syncable="YES"/>
+    </entity>
+    <entity name="Alias" syncable="YES">
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="aliases" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="station" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="alias" inverseEntity="Station" syncable="YES"/>
+    </entity>
+    <entity name="ATOC" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="atoc" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Category" syncable="YES">
+        <attribute name="category" attributeType="String" syncable="YES"/>
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="subcategory" attributeType="String" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="category" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Catering" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="catering" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Class" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="class_type" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Dataset" syncable="YES">
+        <attribute name="date_loaded" attributeType="Date" syncable="YES"/>
+        <attribute name="date_modified" attributeType="Date" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="aliases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Alias" inverseName="dataset" inverseEntity="Alias" syncable="YES"/>
+        <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Group" inverseName="dataset" inverseEntity="Group" syncable="YES"/>
+        <relationship name="links" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="dataset" inverseEntity="Link" syncable="YES"/>
+        <relationship name="routeEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="dataset" inverseEntity="RouteEntry" syncable="YES"/>
+        <relationship name="stations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Station" inverseName="dataset" inverseEntity="Station" syncable="YES"/>
+        <relationship name="tiplocs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tiploc" inverseName="dataset" inverseEntity="Tiploc" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="dataset" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Group" syncable="YES">
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="groups" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="stations" toMany="YES" deletionRule="Nullify" destinationEntity="Station" inverseName="groups" inverseEntity="Station" syncable="YES"/>
+    </entity>
+    <entity name="Link" syncable="YES">
+        <attribute name="end_hour" optional="YES" attributeType="Integer 16" minValueString="0" maxValueString="23" defaultValueString="0" syncable="YES"/>
+        <attribute name="end_minute" optional="YES" attributeType="Integer 16" minValueString="0" maxValueString="59" defaultValueString="0" syncable="YES"/>
+        <attribute name="priority" optional="YES" attributeType="Integer 16" minValueString="1" maxValueString="7" defaultValueString="1" syncable="YES"/>
+        <attribute name="start_hour" optional="YES" attributeType="Integer 16" minValueString="0" maxValueString="23" defaultValueString="0" syncable="YES"/>
+        <attribute name="start_minute" optional="YES" attributeType="Integer 16" minValueString="0" maxValueString="59" defaultValueString="0" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="links" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="destination" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="linksTo" inverseEntity="Station" syncable="YES"/>
+        <relationship name="mode" maxCount="1" deletionRule="Nullify" destinationEntity="LinkMode" inverseName="links" inverseEntity="LinkMode" syncable="YES"/>
+        <relationship name="origin" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="linksFrom" inverseEntity="Station" syncable="YES"/>
+        <relationship name="runsOn" toMany="YES" deletionRule="Nullify" destinationEntity="Weekday" inverseName="links" inverseEntity="Weekday" syncable="YES"/>
+    </entity>
+    <entity name="LinkMode" syncable="YES">
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="links" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="mode" inverseEntity="Link" syncable="YES"/>
+    </entity>
+    <entity name="Power" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="power" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Reservation" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="reservations" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="RouteEntry" syncable="YES">
+        <attribute name="line" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="platform" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="public_arrival_hour" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="public_arrival_minute" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="public_departure_hour" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="public_departure_minute" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="scheduled_arrival_hour" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="scheduled_arrival_minute" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="scheduled_departure_hour" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="scheduled_departure_minute" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="scheduled_pass_hour" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="scheduled_pass_minute" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Activity" inverseName="routeEntries" inverseEntity="Activity" syncable="YES"/>
+        <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="routeEntries" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="station" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="routeEntries" inverseEntity="Station" syncable="YES"/>
+        <relationship name="train" maxCount="1" deletionRule="Nullify" destinationEntity="Train" inverseName="routeEntries" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Sleeper" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="sleeper" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <entity name="Station" syncable="YES">
+        <attribute name="cate" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="change_time" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="crs_main" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="crs_subsidiary" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="easting" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="northing" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <relationship name="alias" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Alias" inverseName="station" inverseEntity="Alias" syncable="YES"/>
+        <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="stations" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Group" inverseName="stations" inverseEntity="Group" syncable="YES"/>
+        <relationship name="linksFrom" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="origin" inverseEntity="Link" syncable="YES"/>
+        <relationship name="linksTo" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="destination" inverseEntity="Link" syncable="YES"/>
+        <relationship name="routeEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="station" inverseEntity="RouteEntry" syncable="YES"/>
+        <relationship name="tiploc" toMany="YES" deletionRule="Nullify" destinationEntity="Tiploc" inverseName="station" inverseEntity="Tiploc" syncable="YES"/>
+    </entity>
+    <entity name="Tiploc" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="tiplocs" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="station" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="tiploc" inverseEntity="Station" syncable="YES"/>
+    </entity>
+    <entity name="Train" syncable="YES">
+        <attribute name="end" attributeType="Date" syncable="YES"/>
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="identity" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="runsOnEnglishBankHolidays" attributeType="Boolean" syncable="YES"/>
+        <attribute name="runsOnScottishBankHolidays" attributeType="Boolean" syncable="YES"/>
+        <attribute name="speed" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="start" attributeType="Date" syncable="YES"/>
+        <attribute name="uid" attributeType="String" syncable="YES"/>
+        <relationship name="atoc" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ATOC" inverseName="trains" inverseEntity="ATOC" syncable="YES"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="trains" inverseEntity="Category" syncable="YES"/>
+        <relationship name="catering" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Catering" inverseName="trains" inverseEntity="Catering" syncable="YES"/>
+        <relationship name="class_type" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Class" inverseName="trains" inverseEntity="Class" syncable="YES"/>
+        <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="trains" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="power" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Power" inverseName="trains" inverseEntity="Power" syncable="YES"/>
+        <relationship name="reservations" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Reservation" inverseName="trains" inverseEntity="Reservation" syncable="YES"/>
+        <relationship name="routeEntries" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="RouteEntry" inverseName="train" inverseEntity="RouteEntry" syncable="YES"/>
+        <relationship name="runsOn" toMany="YES" deletionRule="Nullify" destinationEntity="Weekday" inverseName="trains" inverseEntity="Weekday" syncable="YES"/>
+        <relationship name="sleeper" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sleeper" inverseName="trains" inverseEntity="Sleeper" syncable="YES"/>
+    </entity>
+    <entity name="Weekday" syncable="YES">
+        <attribute name="number" attributeType="Integer 16" minValueString="0" maxValueString="6" defaultValueString="0" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <relationship name="links" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="runsOn" inverseEntity="Link" syncable="YES"/>
+        <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="runsOn" inverseEntity="Train" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Activity" positionX="-387" positionY="-18" width="128" height="90"/>
+        <element name="Alias" positionX="-594" positionY="27" width="128" height="90"/>
+        <element name="ATOC" positionX="-342" positionY="27" width="128" height="90"/>
+        <element name="Category" positionX="-351" positionY="18" width="128" height="105"/>
+        <element name="Catering" positionX="-333" positionY="36" width="128" height="90"/>
+        <element name="Class" positionX="-351" positionY="18" width="128" height="90"/>
+        <element name="Dataset" positionX="-335" positionY="-171" width="128" height="195"/>
+        <element name="Group" positionX="403" positionY="9" width="128" height="90"/>
+        <element name="Link" positionX="-378" positionY="-9" width="128" height="210"/>
+        <element name="LinkMode" positionX="-387" positionY="-18" width="128" height="75"/>
+        <element name="Power" positionX="-387" positionY="-18" width="128" height="90"/>
+        <element name="Reservation" positionX="-369" positionY="0" width="128" height="90"/>
+        <element name="RouteEntry" positionX="-369" positionY="0" width="128" height="285"/>
+        <element name="Sleeper" positionX="-360" positionY="9" width="128" height="90"/>
+        <element name="Station" positionX="-279" positionY="126" width="128" height="255"/>
+        <element name="Tiploc" positionX="-45" positionY="36" width="128" height="90"/>
+        <element name="Train" positionX="-360" positionY="9" width="128" height="315"/>
+        <element name="Weekday" positionX="-342" positionY="27" width="128" height="105"/>
+    </elements>
 </model>

@@ -7,13 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E2498DB71D553F6600EFC7D6 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */; };
+		E2498DB91D555DF100EFC7D6 /* ImportOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */; };
+		E24F41E01D471FFB005A4D76 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24F41DF1D471FFB005A4D76 /* String.swift */; };
 		E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFD1D451E8000C97A1C /* AppDelegate.swift */; };
-		E27480001D451E8000C97A1C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFF1D451E8000C97A1C /* ViewController.swift */; };
+		E27480001D451E8000C97A1C /* ImportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFF1D451E8000C97A1C /* ImportViewController.swift */; };
 		E27480031D451E8000C97A1C /* Train_Map.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E27480011D451E8000C97A1C /* Train_Map.xcdatamodeld */; };
 		E27480051D451E8000C97A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E27480041D451E8000C97A1C /* Assets.xcassets */; };
 		E27480081D451E8000C97A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27480061D451E8000C97A1C /* Main.storyboard */; };
 		E27480131D451E8000C97A1C /* Train_MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27480121D451E8000C97A1C /* Train_MapTests.swift */; };
 		E274801E1D451E8000C97A1C /* Train_MapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E274801D1D451E8000C97A1C /* Train_MapUITests.swift */; };
+		E2A2E3101D568F7F00081451 /* Duplet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A2E30F1D568F7F00081451 /* Duplet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,9 +38,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
+		E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportOperations.swift; sourceTree = "<group>"; };
+		E24F41DF1D471FFB005A4D76 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		E2747FFA1D451E8000C97A1C /* Train Map.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Train Map.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2747FFD1D451E8000C97A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E2747FFF1D451E8000C97A1C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		E2747FFF1D451E8000C97A1C /* ImportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewController.swift; sourceTree = "<group>"; };
 		E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Train_Map.xcdatamodel; sourceTree = "<group>"; };
 		E27480041D451E8000C97A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E27480071D451E8000C97A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -47,6 +54,8 @@
 		E27480191D451E8000C97A1C /* Train MapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Train MapUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E274801D1D451E8000C97A1C /* Train_MapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Train_MapUITests.swift; sourceTree = "<group>"; };
 		E274801F1D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E29815E21D45A7AF00975BEB /* Train Map.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Train Map.entitlements"; sourceTree = "<group>"; };
+		E2A2E30F1D568F7F00081451 /* Duplet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Duplet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,8 +106,13 @@
 		E2747FFC1D451E8000C97A1C /* Train Map */ = {
 			isa = PBXGroup;
 			children = (
+				E29815E21D45A7AF00975BEB /* Train Map.entitlements */,
 				E2747FFD1D451E8000C97A1C /* AppDelegate.swift */,
-				E2747FFF1D451E8000C97A1C /* ViewController.swift */,
+				E2747FFF1D451E8000C97A1C /* ImportViewController.swift */,
+				E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */,
+				E24F41DF1D471FFB005A4D76 /* String.swift */,
+				E2A2E30F1D568F7F00081451 /* Duplet.swift */,
+				E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */,
 				E27480041D451E8000C97A1C /* Assets.xcassets */,
 				E27480061D451E8000C97A1C /* Main.storyboard */,
 				E27480091D451E8000C97A1C /* Info.plist */,
@@ -193,6 +207,11 @@
 				TargetAttributes = {
 					E2747FF91D451E8000C97A1C = {
 						CreatedOnToolsVersion = 7.3.1;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
 					};
 					E274800D1D451E8000C97A1C = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -255,9 +274,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E27480001D451E8000C97A1C /* ViewController.swift in Sources */,
+				E2498DB71D553F6600EFC7D6 /* ProgressViewController.swift in Sources */,
+				E24F41E01D471FFB005A4D76 /* String.swift in Sources */,
+				E2498DB91D555DF100EFC7D6 /* ImportOperations.swift in Sources */,
+				E27480001D451E8000C97A1C /* ImportViewController.swift in Sources */,
 				E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */,
 				E27480031D451E8000C97A1C /* Train_Map.xcdatamodeld in Sources */,
+				E2A2E3101D568F7F00081451 /* Duplet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,6 +502,7 @@
 				E27480241D451E8000C97A1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E27480251D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapTests" */ = {
 			isa = XCConfigurationList;
@@ -487,6 +511,7 @@
 				E27480271D451E8000C97A1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E27480281D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapUITests" */ = {
 			isa = XCConfigurationList;
@@ -495,6 +520,7 @@
 				E274802A1D451E8000C97A1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
