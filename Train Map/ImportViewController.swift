@@ -86,6 +86,7 @@ class ImportViewController: NSViewController {
     
     @IBAction func cancelImports(sender: AnyObject) {
         if (self.pendingOperations != nil) {
+            self.pendingOperations.importsInProgress = []
             self.pendingOperations.importQueue.cancelAllOperations()
         }
         self.view.window!.close()

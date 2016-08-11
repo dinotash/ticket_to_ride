@@ -30,6 +30,15 @@ class ttisImporter: NSOperation {
     let chosenFile: NSURL //file we selected
     let progressViewController: ProgressViewController?
     let updateLimit = 10000 //how many iterations before updating progress bar
+    var dataSet: NSManagedObject?
+    
+    //have a variable starting point so we can keep track of import / pick up later on
+    var msnProgress = 0 //default is to start at the beginning
+    var mcaProgress = 0
+    var ztrProgress = 0
+    var alfProgress = 0
+    var importCount = 0
+    var totalCount = 0
     
     //cache results for some of the codes we will want to fetch later
     var objectCache: [Duplet<String, String> : NSManagedObject] = [:] //(entityType, ID) : Object
@@ -124,14 +133,14 @@ class ttisImporter: NSOperation {
     }
     
     //convenience method to replicate the common part of creation a routeEntry for start (LO), middle (LI) and end lines (LT)
-    private func createRouteEntryFromCodes(tiplocCode: String, scheduledDeparture: String, publicDeparture: String, scheduledArrival: String, publicArrival: String, scheduledPass: String, platform: String, line: String, activityCodes: [String], dataset: NSManagedObject) -> NSManagedObject? {
+    private func createRouteEntryFromCodes(tiplocCode: String, scheduledDeparture: String, publicDeparture: String, scheduledArrival: String, publicArrival: String, scheduledPass: String, platform: String, line: String, activityCodes: [String]) -> NSManagedObject? {
         //can't do anything without a station
         if let station = fetchStationFromTiploc(tiplocCode) {
             
             //create and deal with simple objects first - flat values
             let routeEntryDescription = NSEntityDescription.entityForName("RouteEntry", inManagedObjectContext: self.MOC)
             let newRouteEntry = NSManagedObject(entity: routeEntryDescription!, insertIntoManagedObjectContext: self.MOC)
-            newRouteEntry.setValue(dataset, forKey: "dataset")
+            newRouteEntry.setValue(self.dataSet!, forKey: "dataset")
             newRouteEntry.setValue(station, forKey: "station")
             if (platform.characters.count > 0) {
                 newRouteEntry.setValue(platform, forKey: "platform")
@@ -393,306 +402,68 @@ class ttisImporter: NSOperation {
         }
     }
     
-    override func main() {
-        //check for cancellation at the start - will do so again during the life
-        if self.cancelled {
-            return
-        }
+    //encapsulate process as need to run it for both MCA and ZTR files
+    private func processTrainArray(array: [String], arrayStart: Int, filename: String) {
+        //now load the MCA data with info on trains and routes - we already found its path
+        let trainDescription = NSEntityDescription.entityForName("Train", inManagedObjectContext: self.MOC)
         
-        self.progressViewController?.updateIndeterminate("Checking for necessary files in directory.")
+        //the in the MCA file are not isolated, so need to store info together in one place, and reuse as needed. Must be outside the loop
+        var routeEntries = NSMutableOrderedSet()
+        var trainDays = [Bool](count: 7, repeatedValue: false)
+        var startDate = NSDate()
+        var endDate = NSDate()
+        var id = String()
+        var uid = String()
+        var categoryCode = String()
+        var powerCode = String()
+        var speed = Int()
+        var classCode = String()
+        var sleeperCode = String()
+        var reservationsCode = String()
+        var cateringCodes = [String]()
+        var englishBankHolidays = false
+        var scottishBankHolidays = false
+        var atocCode = String()
         
-        //find the data directory and the file we chose
-        let datasetName = self.chosenFile.URLByDeletingPathExtension!.lastPathComponent!
-        let directoryPath = self.chosenFile.URLByDeletingLastPathComponent!
+        //helps with formatting
+        let progressNumberFormatter = NSNumberFormatter()
+        progressNumberFormatter.numberStyle = .DecimalStyle
+        progressNumberFormatter.hasThousandSeparators = true
         
-        //check directory contains all the files we expect - .alf, .mca, .msn, .ztr
-        let dataFileTypes = ["msn", "mca", "alf", "ztr"]
-        for dataFileType in dataFileTypes {
-            let expectedFilePath = directoryPath.URLByAppendingPathComponent(datasetName + "." + dataFileType)
-            
-            //non-critical error - just stop loading
-            if (!self.fileExists(expectedFilePath)) {
-                dispatch_async(dispatch_get_main_queue(), {
-                    let alert = NSAlert();
-                    alert.alertStyle = NSAlertStyle.WarningAlertStyle
-                    alert.messageText = "Unable to load data from directory";
-                    alert.informativeText = "Could not find expected file - " + expectedFilePath.absoluteString
-                    alert.runModal();
-                })
-                return //stop without doing anything
-            }
-        }
-        
-        //if we get this far, it means we found all the files we need so load them in
-        var newData = true //assume we have new data
-        
-        //first, let's check if the data already exists, if so don't load it
-        let samedataSetFetch = NSFetchRequest(entityName: "Dataset")
-        samedataSetFetch.predicate = NSPredicate(format: "name == %@", datasetName)
-        if (self.MOC.countForFetchRequest(samedataSetFetch, error: nil) > 0) {
-            newData = false
-            dispatch_async(dispatch_get_main_queue(), {
-                let alert = NSAlert();
-                alert.alertStyle = NSAlertStyle.InformationalAlertStyle
-                alert.messageText = "Unable to load data from directory";
-                alert.informativeText = "Dataset " + datasetName + " has already been loaded"
-                alert.runModal();
-            })
-            return //stop without doing anything
-        }
-        
-        if (newData) { //only load data if we don't already have the dataset
-            
-            //load in the constants -- if we don't have them
-            self.loadConstants() //functions already check whether we have all the constants/definitions we need first
-            
-            //Start by defining the dataset
-            let newDataSetEntity = NSEntityDescription.entityForName("Dataset", inManagedObjectContext: self.MOC)
-            let newDataSet = NSManagedObject(entity: newDataSetEntity!, insertIntoManagedObjectContext: self.MOC)
-            newDataSet.setValue(datasetName, forKey: "name")
-            newDataSet.setValue(NSDate(), forKey: "date_loaded")
-            
-            //get the date modified from the MCA file loaded
-            let mcaFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".mca")
-            do {
-                let mcaAttributes = try NSFileManager.defaultManager().attributesOfItemAtPath(mcaFilePath.absoluteString)
-                newDataSet.setValue(mcaAttributes[NSFileModificationDate], forKey: "date_modified")
-            }
-            catch { //if in doubt, set as extreme date and carry on
-                newDataSet.setValue(NSDate.distantPast(), forKey: "date_modified")
-            }
-            
-            //load in all the data - need it up front to have a sense of progress for progress bar
-            let msnFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".msn")
-            let ztrFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".ztr")
-            let alfFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".alf")
-            if self.cancelled {
-                return
-            }
-            self.progressViewController?.updateIndeterminate("Loading " + msnFilePath.lastPathComponent!.uppercaseString)
-            var msnData = self.readFileLines(msnFilePath)
-            if self.cancelled {
-                return
-            }
-            self.progressViewController?.updateIndeterminate("Loading " + mcaFilePath.lastPathComponent!.uppercaseString)
-            var mcaData = self.readFileLines(mcaFilePath)
-            if self.cancelled {
-                return
-            }
-            self.progressViewController?.updateIndeterminate("Loading " + ztrFilePath.lastPathComponent!.uppercaseString)
-            var ztrData = self.readFileLines(ztrFilePath)
-            if self.cancelled {
-                return
-            }
-            self.progressViewController?.updateIndeterminate("Loading " + alfFilePath.lastPathComponent!.uppercaseString)
-            var alfData = self.readFileLines(alfFilePath)
+        //loop through the data line by line
+        var trainDataCount = 0
+        var trainCount = 0
+        self.importCount += arrayStart
+        var lineCount = 0
+        for mcaLine in array {
+            self.importCount += 1
+            lineCount += 1
+            trainDataCount += 1
             if self.cancelled {
                 return
             }
             
-            //check there is something there in each file
-            let dataFiles = [msnData, mcaData, ztrData, alfData]
-            for dataFile in dataFiles {
-                if (dataFile == nil) {
-                    return
-                }
-                if dataFile!.count == 0 {
-                    return
-                }
+            let progressString = "Processing " + filename.uppercaseString + " train data - line " + progressNumberFormatter.stringFromNumber(arrayStart + lineCount)! + " of " + progressNumberFormatter.stringFromNumber(array.count)! + "."
+            let progressValue = Double(self.importCount) / Double(self.totalCount)
+            self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (self.importCount % self.updateLimit == 0))
+            
+            if (mcaLine.characters.count < 10) { //ignore short lines
+                continue
             }
             
-            //variables to keep track of progress
-            let progressNumberFormatter = NSNumberFormatter()
-            progressNumberFormatter.numberStyle = .DecimalStyle
-            progressNumberFormatter.hasThousandSeparators = true
-            var importCount = 0
-            let totalCount = msnData!.count + mcaData!.count + ztrData!.count + alfData!.count
-            
-            //now load the underlying data. Start with stations - in the .MSN file
-            var msnCount = 0
-            for msnLine in msnData! {
-                autoreleasepool {
-                msnCount += 1
-                importCount += 1
-                if self.cancelled {
-                    return
-                }
-                let progressString = "Loading station data - line " + progressNumberFormatter.stringFromNumber(msnCount)! + " of " + progressNumberFormatter.stringFromNumber(msnData!.count)! + "."
-                let progressValue = Double(importCount) / Double(totalCount)
-                self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (importCount % updateLimit == 0))
-                
-                if (msnLine.characters.count > 0) {
-                    //how to process each line depends on
-                    let firstChar = msnLine[msnLine.startIndex]
-                    switch(firstChar) {
-                    case "A":
-                        if (msnLine[msnLine.startIndex.advancedBy(5)] != " ") { //this is the timestamp line
-                            //make new station - predefined data format, things at certain positions on each row
-                            var stationName = msnLine.substring(3, end: 34)
-                            stationName = stationName.formatName()//capitalize and then fix errors in name processing
-                            
-                            //other properties
-                            let cate = Int(String((msnLine.characters[msnLine.startIndex.advancedBy(35)]))) //0: Not an interchange, 1: Small interchange, 2: medium interchange, 3: large interchange, 9: subsidiary TIPLOC at station with more than one
-                            let tiploc = msnLine.substring(36, end: 42) //timing point location code
-                            let subsidiaryCRS = msnLine.substring(43, end: 45) //3-alpha code
-                            let mainCRS = msnLine.substring(49, end: 51) //3-alpha code
-                            let easting = Int(msnLine.substring(52, end: 56))! //geographic coordinates. Units of 100m. 10000 = Carrick on Shannon, 18690 = Amsterdam
-                            let northing = Int(msnLine.substring(58, end: 62))! //geographic coordinates. Units of 100m. 60126 = Lizard (Bus), 69703 = Scrabster
-                            let changeTime = Int(msnLine.substring(63, end: 65))!
-                            
-                            //load them into an object
-                            let newStationEntity = NSEntityDescription.entityForName("Station", inManagedObjectContext: self.MOC)
-                            let newStation = NSManagedObject(entity: newStationEntity!, insertIntoManagedObjectContext: self.MOC)
-                            newStation.setValue(newDataSet, forKey: "dataset")
-                            newStation.setValue(stationName, forKey: "name")
-                            newStation.setValue(cate, forKey: "cate")
-                            if (subsidiaryCRS != mainCRS) {
-                                newStation.setValue(subsidiaryCRS, forKey: "crs_subsidiary")
-                            }
-                            newStation.setValue(mainCRS, forKey: "crs_main")
-                            newStation.setValue(easting, forKey: "easting")
-                            newStation.setValue(northing, forKey: "northing")
-                            newStation.setValue(changeTime, forKey: "change_time")
-                            
-                            //create a tiploc entry
-                            let tiplocEntityDescription = NSEntityDescription.entityForName("Tiploc", inManagedObjectContext: self.MOC)
-                            let tiplocEntity = NSManagedObject(entity: tiplocEntityDescription!, insertIntoManagedObjectContext: self.MOC)
-                            tiplocEntity.setValue(newDataSet, forKey: "dataset")
-                            tiplocEntity.setValue(tiploc, forKey: "code")
-                            tiplocEntity.setValue(newStation, forKey: "station")
-                            let tiplocKey = Duplet<String, String>("Tiploc", tiploc)
-                            self.objectCache[tiplocKey] = tiplocEntity
-                        }
-                        break
-                        
-                    case "C": //station comments. Historic and should be ignored
-                        break
-                        
-                    case "L": //alias. Process and save as an alias object
-                        do {
-                            //find the original station using its name
-                            var mainName = msnLine.substring(3, end: 35)
-                            mainName = mainName.formatName()
-                            let stationNameKey = Duplet<String, String>("Station", mainName)
-                            if let thisStation = self.objectCache[stationNameKey] {
-                            
-                                //get the alias name
-                                var aliasName = msnLine.substring(36, end: 66)
-                                aliasName = aliasName.formatName()
-                                
-                                //create an object and link the alias to the station
-                                let newAliasEntity = NSEntityDescription.entityForName("Alias", inManagedObjectContext: self.MOC)
-                                let newAlias = NSManagedObject(entity: newAliasEntity!, insertIntoManagedObjectContext: self.MOC)
-                                newAlias.setValue(aliasName, forKey: "name")
-                                newAlias.setValue(newDataSet, forKey: "dataset")
-                                newAlias.setValue(thisStation, forKey: "station")
-                            }
-                        }
-                        break
-                        
-                    case "G": //group. Historic and should be ignored
-                        break
-                        
-                    case "R": //routing group for non-National Rail. Historic and should be ignored
-                        break
-                        
-                    case "V": //Routing groups used today -> process and save as a group object
-                        //extract the group name
-                        var groupName = msnLine.substring(3, end: 35)
-                        groupName = groupName.formatName()
-                        
-                        //extract the station three-letter codes
-                        let groupCodesString = msnLine.substring(36, end: 76)
-                        let groupCodes = groupCodesString.componentsSeparatedByString(" ")
-                        
-                        //compile a list of actual stations
-                        let groupStations = NSMutableSet()
-                        for code in groupCodes {
-                            let crsKey = Duplet<String, String>("Station", code)
-                            if let thisStation = self.objectCache[crsKey] {
-                                groupStations.addObject(thisStation)
-                            }
-                        }
-                        
-                        //if we found something then make a group object
-                        if (groupStations.count > 0) {
-                            let newGroupEntity = NSEntityDescription.entityForName("Group", inManagedObjectContext: self.MOC)
-                            let newGroup = NSManagedObject(entity: newGroupEntity!, insertIntoManagedObjectContext: self.MOC)
-                            newGroup.setValue(groupName, forKey: "name")
-                            newGroup.setValue(newDataSet, forKey: "dataset")
-                            newGroup.setValue(groupStations, forKey: "stations")
-                        }
-                        break
-                        
-                    default:
-                        break
-                    }
-                }
-                }
-            }
-            msnData = [] //free up memory
-            
-            //save the dataset after all the data is loaded
-            do {
-                self.progressViewController?.updateIndeterminate("Saving imported data.")
-                try self.MOC.save()
-                print("Saved managed objects")
-            } catch let error as NSError  {
-                NSLog("Could not save \(error), \(error.userInfo)")
-            }
-            
-            //now load the MCA data with info on trains and routes - we already found its path
-            let trainDescription = NSEntityDescription.entityForName("Train", inManagedObjectContext: self.MOC)
-            
-            //the in the MCA file are not isolated, so need to store info together in one place, and reuse as needed. Must be outside the loop
-            var routeEntries = NSMutableOrderedSet()
-            var trainDays = [Bool](count: 7, repeatedValue: false)
-            var startDate = NSDate()
-            var endDate = NSDate()
-            var id = String()
-            var uid = String()
-            var categoryCode = String()
-            var powerCode = String()
-            var speed = Int()
-            var classCode = String()
-            var sleeperCode = String()
-            var reservationsCode = String()
-            var cateringCodes = [String]()
-            var englishBankHolidays = false
-            var scottishBankHolidays = false
-            var atocCode = String()
-            
-            //loop through the data line by line
-            var trainDataCount = 0
-            var trainCount = 0
-            for mcaLine in (mcaData! + ztrData!) {
-                importCount += 1
-                trainDataCount += 1
-                if self.cancelled {
-                    return
-                }
-                
-                let progressString = "Processing train data - line " + progressNumberFormatter.stringFromNumber(trainDataCount)! + " of " + progressNumberFormatter.stringFromNumber(mcaData!.count + ztrData!.count)! + "."
-                let progressValue = Double(importCount) / Double(totalCount)
-                self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (importCount % updateLimit == 0))
-                
-                if (mcaLine.characters.count < 10) { //ignore short lines
-                    continue
-                }
-                
-                autoreleasepool {
+            autoreleasepool {
                 let recordType = mcaLine.substring(0, end: 1)
                 switch(recordType) {
                 case "BS": //basic details -> days running
                     //this is the start of a new route so close off the old one
                     trainCount += 1
                     
-                    if (trainCount > 1) { //check it's not the first time we've found a BS line
+                    if ((trainCount > 1) && (arrayStart < array.count)) { //check it's not the first time we've found a BS line
                         //create the object, and cache it
                         let newTrain = NSManagedObject(entity: trainDescription!, insertIntoManagedObjectContext: self.MOC)
                         
                         //set constant values that don't depend on looking up other types of thing
-                        newTrain.setValue(newDataSet, forKey: "dataset")
+                        newTrain.setValue(self.dataSet!, forKey: "dataset")
                         newTrain.setValue(uid, forKey: "uid")
                         newTrain.setValue(id, forKey: "id")
                         newTrain.setValue(startDate, forKey: "start")
@@ -738,13 +509,16 @@ class ttisImporter: NSOperation {
                         newTrain.setValue(runsOn, forKey: "runsOn")
                         
                         if (trainCount % updateLimit == 0) {
-                            //save the dataset after all the data is loaded
-                            do {
-                                self.progressViewController?.updateIndeterminate("Saving imported data.")
-                                try self.MOC.save()
-                                print("Saved managed objects")
-                            } catch let error as NSError  {
-                                print("Could not save \(error), \(error.userInfo)")
+                            if (lineCount > 0) { //don't do it just on resuming
+                                //save the dataset after all the data is loaded
+                                do {
+                                    self.progressViewController?.updateIndeterminate("Saving imported data.")
+                                    self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
+                                    try self.MOC.save()
+                                    print("Saved managed objects")
+                                } catch let error as NSError  {
+                                    print("Could not save \(error), \(error.userInfo)")
+                                }
                             }
                         }
                     }
@@ -823,15 +597,8 @@ class ttisImporter: NSOperation {
                         }
                     }
                     
-//                    print("tiploc: " + tiplocCode)
-//                    let key = Duplet<String, String>("Tiploc", tiplocCode)
-//                    let tt = self.objectCache[key]
-//                    print(tt)
-//                    let tstation = tt!.valueForKey("station")
-//                    print(tstation)
-                    
                     //now formulate a routeEntry with that info if we found any
-                    if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: scheduledDeparture, publicDeparture: publicDeparture, scheduledArrival: "", publicArrival: "", scheduledPass: "", platform: platform, line: line, activityCodes: activityCodes, dataset: newDataSet) {
+                    if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: scheduledDeparture, publicDeparture: publicDeparture, scheduledArrival: "", publicArrival: "", scheduledPass: "", platform: platform, line: line, activityCodes: activityCodes) {
                         routeEntries.addObject(newRouteEntry)
                     }
                     break
@@ -855,7 +622,7 @@ class ttisImporter: NSOperation {
                         }
                     }
                     
-                    if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: scheduledDeparture, publicDeparture: publicDeparture, scheduledArrival: scheduledArrival, publicArrival: publicArrival, scheduledPass: scheduledPass, platform: platform, line: line, activityCodes: activityCodes, dataset: newDataSet) {
+                    if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: scheduledDeparture, publicDeparture: publicDeparture, scheduledArrival: scheduledArrival, publicArrival: publicArrival, scheduledPass: scheduledPass, platform: platform, line: line, activityCodes: activityCodes) {
                         routeEntries.addObject(newRouteEntry)
                     }
                     break
@@ -879,7 +646,7 @@ class ttisImporter: NSOperation {
                         }
                     }
                     
-                    if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: "", publicDeparture: "", scheduledArrival: scheduledArrival, publicArrival: publicArrival, scheduledPass: "", platform: platform, line: "", activityCodes: activityCodes, dataset: newDataSet) {
+                    if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: "", publicDeparture: "", scheduledArrival: scheduledArrival, publicArrival: publicArrival, scheduledPass: "", platform: platform, line: "", activityCodes: activityCodes) {
                         routeEntries.addObject(newRouteEntry)
                     }
                     
@@ -891,207 +658,484 @@ class ttisImporter: NSOperation {
                 default: //ignore the others
                     break
                 }
-                }
             }
-            
-            //also need to run through and make the last train after the last time through the loop
-            if (uid.characters.count > 0) { //check it's not the initializer
-                //create the object
-                let newTrain = NSManagedObject(entity: trainDescription!, insertIntoManagedObjectContext: self.MOC)
-                
-                //set constant values that don't depend on looking up other types of thing
-                newTrain.setValue(newDataSet, forKey: "dataset")
-                newTrain.setValue(uid, forKey: "uid")
-                newTrain.setValue(id, forKey: "id")
-                newTrain.setValue(routeEntries, forKey: "routeEntries")
-                newTrain.setValue(startDate, forKey: "start")
-                newTrain.setValue(endDate, forKey: "end")
-                newTrain.setValue(speed, forKey: "speed")
-                newTrain.setValue(englishBankHolidays, forKey: "runsOnEnglishBankHolidays")
-                newTrain.setValue(scottishBankHolidays, forKey: "runsOnScottishBankHolidays")
-                
-                //go and fetch lookups for codes and add to the objects
-                newTrain.setValue(self.fetchCode("ATOC", code: atocCode), forKey: "atoc")
-                newTrain.setValue(self.fetchCode("Category", code: categoryCode), forKey: "category")
-                newTrain.setValue(self.fetchCode("Power", code: powerCode), forKey: "power")
-                newTrain.setValue(self.fetchCode("Class", code: classCode), forKey: "class_type")
-                newTrain.setValue(self.fetchCode("Sleeper", code: sleeperCode), forKey: "sleeper")
-                newTrain.setValue(self.fetchCode("Reservation", code: reservationsCode), forKey: "reservations")
-                
-                //look up all of the catering codes and add a set to the train
-                let caterings = NSMutableSet()
-                for code in cateringCodes {
-                    let cateringCode = Duplet<String, String>("Catering", code)
-                    if let cateringResult = self.objectCache[cateringCode] {
-                        caterings.addObject(cateringResult)
-                    }
-                }
-                if (caterings.count > 0) {
-                    newTrain.setValue(caterings, forKey: "catering")
-                }
-                
-                //deal with the days it runs on
-                let runsOn = NSMutableSet()
-                for i in 0 ..< 7 {
-                    if (trainDays[i] == true) {
-                        if let thisDay = self.fetchCode("Weekday", code: String(i)) {
-                            runsOn.addObject(thisDay)
-                        }
-                    }
-                }
-                newTrain.setValue(runsOn, forKey: "runsOn")
-            }
-            //reset arrays to save space
-            mcaData = []
-            ztrData = []
-            
-            //now import the ALF fixed links data
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.dateFormat = "dd/MM/yyyy"
-            let linkDescription = NSEntityDescription.entityForName("Link", inManagedObjectContext: self.MOC)
-            var alfCount = 0
-            
-            for alfLine in alfData! {
-                autoreleasepool {
-                alfCount += 1
-                importCount += 1
-                if self.cancelled {
-                    return
-                }
-                let progressString = "Loading fixed link data - line " + progressNumberFormatter.stringFromNumber(alfCount)! + " of " + progressNumberFormatter.stringFromNumber(alfData!.count)! + "."
-                let progressValue = Double(importCount) / Double(totalCount)
-                self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (importCount % updateLimit == 0))
-                
-                if (alfLine.characters.count > 0) {
-                    if (alfLine[alfLine.startIndex] == "M") {
-                        
-                        //values we will fill in
-                        var origin: AnyObject?
-                        var destination: AnyObject?
-                        var start_hour: Int?
-                        var start_minute: Int?
-                        var end_hour: Int?
-                        var end_minute: Int?
-                        var time: Int?
-                        var priority: Int?
-                        var start_date: NSDate?
-                        var end_date: NSDate?
-                        var days: NSMutableSet?
-                        var mode: AnyObject?
-                        
-                        //now extract the rest
-                        let alfParts = alfLine.componentsSeparatedByString(",") //comma separated values
-                        for alfPart in alfParts {
-                            let alfPartParts = alfPart.componentsSeparatedByString("=") //key before the =, value after
-                            switch(alfPartParts[0]) { //treat differently depending on value
-                                case "M": //mode
-                                    let modeName = alfPartParts[1].lowercaseString.capitalizedString
-                                    mode = self.fetchCode("LinkMode", code: modeName)
-                                    break
-                                
-                                case "O": //origin station
-                                    let stationCode = alfPartParts[1]
-                                    origin = self.fetchCode("Station", code: stationCode)
-                                    break
-                                
-                                case "D": //destination station
-                                    let stationCode = alfPartParts[1]
-                                    destination = self.fetchCode("Station", code: stationCode)
-                                    break
-                                
-                                case "T": //time taken
-                                    time = Int(alfPartParts[1])
-                                    break
-                                
-                                case "S": //start time in hhmm format
-                                    let timeParts = alfPartParts[1].hhmmTime()
-                                    if (timeParts != nil) {
-                                        start_hour = timeParts!.hour
-                                        start_minute = timeParts!.minute
-                                    }
-                                    break
-                                
-                                case "E": //end time in hhmm format
-                                    let timeParts = alfPartParts[1].hhmmTime()
-                                    if (timeParts != nil) {
-                                        end_hour = timeParts!.hour
-                                        end_minute = timeParts!.minute
-                                    }
-                                    break
-                                
-                                case "P": //priority
-                                    priority = Int(alfPartParts[1])
-                                    break
-                                
-                                case "F": //optional start date in dd/mm/yyyy format
-                                    start_date = dateFormatter.dateFromString(alfPartParts[1])
-                                    break
-                                
-                                case "U": //optional end date in dd/mm/yyyy format
-                                    end_date = dateFormatter.dateFromString(alfPartParts[1])
-                                    break
-                                
-                                case "R": //0 or 1 for each day of the week, starting with Monday
-                                    days = NSMutableSet()
-                                    var dayCount = 0
-                                    for dayCharacter in alfPartParts[1].characters {
-                                        if (dayCharacter == "1") { //only need the ones where it runs on
-                                            if let thisDay = self.fetchCode("Weekday", code: String(dayCount)) {
-                                                days!.addObject(thisDay)
-                                            }
-                                        }
-                                        dayCount += 1
-                                    }
-                                    break
-                            
-                                default:
-                                    break
-                            }
-                        }
-                        
-                        //cope with optional dates
-                        if (start_date == nil) {
-                            start_date = NSDate.distantPast()
-                        }
-                        if (end_date == nil) {
-                            end_date = NSDate.distantFuture()
-                        }
-                        
-                        //check we have something for each field and skip if not
-                        let non_optional_fields = [origin, destination, start_hour, start_minute, end_hour, end_minute, time, priority, start_date, end_date, days, mode]
-                        var all_fields_complete = true
-                        for field in non_optional_fields {
-                            if field == nil {
-                                all_fields_complete = false
-                                break
-                            }
-                        }
-                        
-                        if (all_fields_complete) {
-                            //if have everything, then make the object
-                            let linkEntity = NSManagedObject(entity: linkDescription!, insertIntoManagedObjectContext: self.MOC)
-                            linkEntity.setValue(origin, forKey: "origin")
-                            linkEntity.setValue(destination, forKey: "destination")
-                            linkEntity.setValue(mode, forKey: "mode")
-                            linkEntity.setValue(newDataSet, forKey: "dataset")
-                            linkEntity.setValue(start_hour, forKey: "start_hour")
-                            linkEntity.setValue(start_minute, forKey: "start_minute")
-                            linkEntity.setValue(end_hour, forKey: "end_hour")
-                            linkEntity.setValue(end_minute, forKey: "end_minute")
-                            linkEntity.setValue(time, forKey: "time")
-                            linkEntity.setValue(priority, forKey: "priority")
-                            linkEntity.setValue(days, forKey: "runsOn")
-                        }
-                    }
-                }
-                }
-            }
-            alfData = [] //free up memory
+        }
         
-            //save the dataset after all the data is loaded
+        //also need to run through and make the last train after the last time through the loop
+        if (uid.characters.count > 0) { //check it's not the initializer
+            //create the object
+            let newTrain = NSManagedObject(entity: trainDescription!, insertIntoManagedObjectContext: self.MOC)
+            
+            //set constant values that don't depend on looking up other types of thing
+            newTrain.setValue(self.dataSet!, forKey: "dataset")
+            newTrain.setValue(uid, forKey: "uid")
+            newTrain.setValue(id, forKey: "id")
+            newTrain.setValue(routeEntries, forKey: "routeEntries")
+            newTrain.setValue(startDate, forKey: "start")
+            newTrain.setValue(endDate, forKey: "end")
+            newTrain.setValue(speed, forKey: "speed")
+            newTrain.setValue(englishBankHolidays, forKey: "runsOnEnglishBankHolidays")
+            newTrain.setValue(scottishBankHolidays, forKey: "runsOnScottishBankHolidays")
+            
+            //go and fetch lookups for codes and add to the objects
+            newTrain.setValue(self.fetchCode("ATOC", code: atocCode), forKey: "atoc")
+            newTrain.setValue(self.fetchCode("Category", code: categoryCode), forKey: "category")
+            newTrain.setValue(self.fetchCode("Power", code: powerCode), forKey: "power")
+            newTrain.setValue(self.fetchCode("Class", code: classCode), forKey: "class_type")
+            newTrain.setValue(self.fetchCode("Sleeper", code: sleeperCode), forKey: "sleeper")
+            newTrain.setValue(self.fetchCode("Reservation", code: reservationsCode), forKey: "reservations")
+            
+            //look up all of the catering codes and add a set to the train
+            let caterings = NSMutableSet()
+            for code in cateringCodes {
+                let cateringCode = Duplet<String, String>("Catering", code)
+                if let cateringResult = self.objectCache[cateringCode] {
+                    caterings.addObject(cateringResult)
+                }
+            }
+            if (caterings.count > 0) {
+                newTrain.setValue(caterings, forKey: "catering")
+            }
+            
+            //deal with the days it runs on
+            let runsOn = NSMutableSet()
+            for i in 0 ..< 7 {
+                if (trainDays[i] == true) {
+                    if let thisDay = self.fetchCode("Weekday", code: String(i)) {
+                        runsOn.addObject(thisDay)
+                    }
+                }
+            }
+            newTrain.setValue(runsOn, forKey: "runsOn")
+        }
+        
+        //save the dataset after all the data is loaded
+        do {
+            self.progressViewController?.updateIndeterminate("Saving imported data.")
+            self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
+            try self.MOC.save()
+            print("Saved managed objects")
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+    }
+    
+    override func main() {
+        //check for cancellation at the start - will do so again during the life
+        if self.cancelled {
+            return
+        }
+        
+        self.progressViewController?.updateIndeterminate("Checking for necessary files in directory.")
+        
+        //find the data directory and the file we chose
+        let datasetName = self.chosenFile.URLByDeletingPathExtension!.lastPathComponent!
+        let directoryPath = self.chosenFile.URLByDeletingLastPathComponent!
+        
+        //check directory contains all the files we expect - .alf, .mca, .msn, .ztr
+        let dataFileTypes = ["msn", "mca", "alf", "ztr"]
+        for dataFileType in dataFileTypes {
+            let expectedFilePath = directoryPath.URLByAppendingPathComponent(datasetName + "." + dataFileType)
+            
+            //non-critical error - just stop loading
+            if (!self.fileExists(expectedFilePath)) {
+                dispatch_async(dispatch_get_main_queue(), {
+                    let alert = NSAlert();
+                    alert.alertStyle = NSAlertStyle.WarningAlertStyle
+                    alert.messageText = "Unable to load data from directory";
+                    alert.informativeText = "Could not find expected file - " + expectedFilePath.absoluteString
+                    alert.runModal();
+                })
+                return //stop without doing anything
+            }
+        }
+        
+        //first, let's check if the data already exists, if so don't load it
+        let samedataSetFetch = NSFetchRequest(entityName: "Dataset")
+        samedataSetFetch.predicate = NSPredicate(format: "name == %@", datasetName)
+        if (self.MOC.countForFetchRequest(samedataSetFetch, error: nil) > 0) {
+            
+            //find out where we got to last time
+            do {
+                self.dataSet = try (self.MOC.executeFetchRequest(samedataSetFetch)[0] as! NSManagedObject)
+                self.msnProgress = self.dataSet!.valueForKey("msnProgress") as! Int
+                self.mcaProgress = self.dataSet!.valueForKey("mcaProgress") as! Int
+                self.ztrProgress = self.dataSet!.valueForKey("ztrProgress") as! Int
+                self.alfProgress = self.dataSet!.valueForKey("alfProgress") as! Int
+            }
+            catch {
+
+            }
+        }
+        
+        if (self.dataSet == nil) { //create a new dataset if we don't already have one
+            
+            //Start by defining the dataset
+            let newDataSetEntity = NSEntityDescription.entityForName("Dataset", inManagedObjectContext: self.MOC)
+            let newDataSet = NSManagedObject(entity: newDataSetEntity!, insertIntoManagedObjectContext: self.MOC)
+            newDataSet.setValue(datasetName, forKey: "name")
+            newDataSet.setValue(NSDate(), forKey: "date_loaded")
+            self.dataSet = newDataSet
+        }
+        
+        //load in the constants -- if we don't have them
+        self.loadConstants() //functions already check whether we have all the constants/definitions we need first
+        
+        //get the date modified from the MCA file loaded
+        let mcaFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".mca")
+        do {
+            let mcaAttributes = try NSFileManager.defaultManager().attributesOfItemAtPath(mcaFilePath.absoluteString)
+            self.dataSet!.setValue(mcaAttributes[NSFileModificationDate], forKey: "date_modified")
+        }
+        catch { //if in doubt, set as extreme date and carry on
+            self.dataSet!.setValue(NSDate.distantPast(), forKey: "date_modified")
+        }
+        
+        //load in all the data - need it up front to have a sense of progress for progress bar
+        let msnFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".msn")
+        let ztrFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".ztr")
+        let alfFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".alf")
+        if self.cancelled {
+            return
+        }
+        self.progressViewController?.updateIndeterminate("Loading " + msnFilePath.lastPathComponent!.uppercaseString)
+        var msnData = self.readFileLines(msnFilePath)
+        if self.cancelled {
+            return
+        }
+        self.progressViewController?.updateIndeterminate("Loading " + mcaFilePath.lastPathComponent!.uppercaseString)
+        var mcaData = self.readFileLines(mcaFilePath)
+        if self.cancelled {
+            return
+        }
+        self.progressViewController?.updateIndeterminate("Loading " + ztrFilePath.lastPathComponent!.uppercaseString)
+        var ztrData = self.readFileLines(ztrFilePath)
+        if self.cancelled {
+            return
+        }
+        self.progressViewController?.updateIndeterminate("Loading " + alfFilePath.lastPathComponent!.uppercaseString)
+        var alfData = self.readFileLines(alfFilePath)
+        if self.cancelled {
+            return
+        }
+        
+        //check there is something there in each file
+        let dataFiles = [msnData, mcaData, ztrData, alfData]
+        for dataFile in dataFiles {
+            if (dataFile == nil) {
+                return
+            }
+            if dataFile!.count == 0 {
+                return
+            }
+        }
+        
+        //variables to keep track of progress
+        let progressNumberFormatter = NSNumberFormatter()
+        progressNumberFormatter.numberStyle = .DecimalStyle
+        progressNumberFormatter.hasThousandSeparators = true
+        self.importCount = self.msnProgress //skip ahead if we can
+        self.totalCount = msnData!.count + mcaData!.count + ztrData!.count + alfData!.count
+        
+        //now load the underlying data. Start with stations - in the .MSN file
+        for msnLine in msnData![self.msnProgress..<msnData!.endIndex] {
+            autoreleasepool {
+            self.msnProgress += 1
+            self.importCount += 1
+            if self.cancelled {
+                return
+            }
+            let progressString = "Loading station data - line " + progressNumberFormatter.stringFromNumber(self.msnProgress)! + " of " + progressNumberFormatter.stringFromNumber(msnData!.count)! + "."
+            let progressValue = Double(self.importCount) / Double(self.totalCount)
+            self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (self.importCount % self.updateLimit == 0))
+            
+            if (msnLine.characters.count > 0) {
+                //how to process each line depends on
+                let firstChar = msnLine[msnLine.startIndex]
+                switch(firstChar) {
+                case "A":
+                    if (msnLine[msnLine.startIndex.advancedBy(5)] != " ") { //this is the timestamp line
+                        //make new station - predefined data format, things at certain positions on each row
+                        var stationName = msnLine.substring(3, end: 34)
+                        stationName = stationName.formatName()//capitalize and then fix errors in name processing
+                        
+                        //other properties
+                        let cate = Int(String((msnLine.characters[msnLine.startIndex.advancedBy(35)]))) //0: Not an interchange, 1: Small interchange, 2: medium interchange, 3: large interchange, 9: subsidiary TIPLOC at station with more than one
+                        let tiploc = msnLine.substring(36, end: 42) //timing point location code
+                        let subsidiaryCRS = msnLine.substring(43, end: 45) //3-alpha code
+                        let mainCRS = msnLine.substring(49, end: 51) //3-alpha code
+                        let easting = Int(msnLine.substring(52, end: 56))! //geographic coordinates. Units of 100m. 10000 = Carrick on Shannon, 18690 = Amsterdam
+                        let northing = Int(msnLine.substring(58, end: 62))! //geographic coordinates. Units of 100m. 60126 = Lizard (Bus), 69703 = Scrabster
+                        let changeTime = Int(msnLine.substring(63, end: 65))!
+                        
+                        //load them into an object
+                        let newStationEntity = NSEntityDescription.entityForName("Station", inManagedObjectContext: self.MOC)
+                        let newStation = NSManagedObject(entity: newStationEntity!, insertIntoManagedObjectContext: self.MOC)
+                        newStation.setValue(self.dataSet!, forKey: "dataset")
+                        newStation.setValue(stationName, forKey: "name")
+                        newStation.setValue(cate, forKey: "cate")
+                        if (subsidiaryCRS != mainCRS) {
+                            newStation.setValue(subsidiaryCRS, forKey: "crs_subsidiary")
+                        }
+                        newStation.setValue(mainCRS, forKey: "crs_main")
+                        newStation.setValue(easting, forKey: "easting")
+                        newStation.setValue(northing, forKey: "northing")
+                        newStation.setValue(changeTime, forKey: "change_time")
+                        
+                        //create a tiploc entry
+                        let tiplocEntityDescription = NSEntityDescription.entityForName("Tiploc", inManagedObjectContext: self.MOC)
+                        let tiplocEntity = NSManagedObject(entity: tiplocEntityDescription!, insertIntoManagedObjectContext: self.MOC)
+                        tiplocEntity.setValue(self.dataSet!, forKey: "dataset")
+                        tiplocEntity.setValue(tiploc, forKey: "code")
+                        tiplocEntity.setValue(newStation, forKey: "station")
+                        let tiplocKey = Duplet<String, String>("Tiploc", tiploc)
+                        self.objectCache[tiplocKey] = tiplocEntity
+                    }
+                    break
+                    
+                case "C": //station comments. Historic and should be ignored
+                    break
+                    
+                case "L": //alias. Process and save as an alias object
+                    do {
+                        //find the original station using its name
+                        var mainName = msnLine.substring(3, end: 35)
+                        mainName = mainName.formatName()
+                        let stationNameKey = Duplet<String, String>("Station", mainName)
+                        if let thisStation = self.objectCache[stationNameKey] {
+                        
+                            //get the alias name
+                            var aliasName = msnLine.substring(36, end: 66)
+                            aliasName = aliasName.formatName()
+                            
+                            //create an object and link the alias to the station
+                            let newAliasEntity = NSEntityDescription.entityForName("Alias", inManagedObjectContext: self.MOC)
+                            let newAlias = NSManagedObject(entity: newAliasEntity!, insertIntoManagedObjectContext: self.MOC)
+                            newAlias.setValue(aliasName, forKey: "name")
+                            newAlias.setValue(self.dataSet!, forKey: "dataset")
+                            newAlias.setValue(thisStation, forKey: "station")
+                        }
+                    }
+                    break
+                    
+                case "G": //group. Historic and should be ignored
+                    break
+                    
+                case "R": //routing group for non-National Rail. Historic and should be ignored
+                    break
+                    
+                case "V": //Routing groups used today -> process and save as a group object
+                    //extract the group name
+                    var groupName = msnLine.substring(3, end: 35)
+                    groupName = groupName.formatName()
+                    
+                    //extract the station three-letter codes
+                    let groupCodesString = msnLine.substring(36, end: 76)
+                    let groupCodes = groupCodesString.componentsSeparatedByString(" ")
+                    
+                    //compile a list of actual stations
+                    let groupStations = NSMutableSet()
+                    for code in groupCodes {
+                        let crsKey = Duplet<String, String>("Station", code)
+                        if let thisStation = self.objectCache[crsKey] {
+                            groupStations.addObject(thisStation)
+                        }
+                    }
+                    
+                    //if we found something then make a group object
+                    if (groupStations.count > 0) {
+                        let newGroupEntity = NSEntityDescription.entityForName("Group", inManagedObjectContext: self.MOC)
+                        let newGroup = NSManagedObject(entity: newGroupEntity!, insertIntoManagedObjectContext: self.MOC)
+                        newGroup.setValue(groupName, forKey: "name")
+                        newGroup.setValue(self.dataSet!, forKey: "dataset")
+                        newGroup.setValue(groupStations, forKey: "stations")
+                    }
+                    break
+                    
+                default:
+                    break
+                }
+            }
+            }
+        }
+        msnData = [] //free up memory
+        
+        //save the dataset after all the data is loaded
+        if (self.msnProgress < msnData!.count) {
+            do {
+                self.progressViewController?.updateIndeterminate("Saving imported data.")
+                self.dataSet!.setValue(self.msnProgress, forKey: "msnProgress")
+                try self.MOC.save()
+                print("Saved managed objects")
+            } catch let error as NSError  {
+                NSLog("Could not save \(error), \(error.userInfo)")
+            }
+        }
+        
+        if self.cancelled {
+            return
+        }
+        processTrainArray(mcaData!, arrayStart: self.mcaProgress, filename: "mca")
+        
+        if self.cancelled {
+            return
+        }
+        
+        processTrainArray(ztrData!, arrayStart: self.ztrProgress, filename: "ztr")
+
+        //reset arrays to save space
+        mcaData = []
+        ztrData = []
+        
+        //now import the ALF fixed links data
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        let linkDescription = NSEntityDescription.entityForName("Link", inManagedObjectContext: self.MOC)
+        self.importCount += self.alfProgress //skip ahead if we can
+        
+        for alfLine in alfData![self.alfProgress..<alfData!.endIndex] {
+            autoreleasepool {
+            self.alfProgress += 1
+            self.importCount += 1
+            if self.cancelled {
+                return
+            }
+            let progressString = "Loading fixed link data - line " + progressNumberFormatter.stringFromNumber(self.alfProgress)! + " of " + progressNumberFormatter.stringFromNumber(alfData!.count)! + "."
+            let progressValue = Double(self.importCount) / Double(self.totalCount)
+            self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (self.importCount % self.updateLimit == 0))
+            
+            if (alfLine.characters.count > 0) {
+                if (alfLine[alfLine.startIndex] == "M") {
+                    
+                    //values we will fill in
+                    var origin: AnyObject?
+                    var destination: AnyObject?
+                    var start_hour: Int?
+                    var start_minute: Int?
+                    var end_hour: Int?
+                    var end_minute: Int?
+                    var time: Int?
+                    var priority: Int?
+                    var start_date: NSDate?
+                    var end_date: NSDate?
+                    var days: NSMutableSet?
+                    var mode: AnyObject?
+                    
+                    //now extract the rest
+                    let alfParts = alfLine.componentsSeparatedByString(",") //comma separated values
+                    for alfPart in alfParts {
+                        let alfPartParts = alfPart.componentsSeparatedByString("=") //key before the =, value after
+                        switch(alfPartParts[0]) { //treat differently depending on value
+                            case "M": //mode
+                                let modeName = alfPartParts[1].lowercaseString.capitalizedString
+                                mode = self.fetchCode("LinkMode", code: modeName)
+                                break
+                            
+                            case "O": //origin station
+                                let stationCode = alfPartParts[1]
+                                origin = self.fetchCode("Station", code: stationCode)
+                                break
+                            
+                            case "D": //destination station
+                                let stationCode = alfPartParts[1]
+                                destination = self.fetchCode("Station", code: stationCode)
+                                break
+                            
+                            case "T": //time taken
+                                time = Int(alfPartParts[1])
+                                break
+                            
+                            case "S": //start time in hhmm format
+                                let timeParts = alfPartParts[1].hhmmTime()
+                                if (timeParts != nil) {
+                                    start_hour = timeParts!.hour
+                                    start_minute = timeParts!.minute
+                                }
+                                break
+                            
+                            case "E": //end time in hhmm format
+                                let timeParts = alfPartParts[1].hhmmTime()
+                                if (timeParts != nil) {
+                                    end_hour = timeParts!.hour
+                                    end_minute = timeParts!.minute
+                                }
+                                break
+                            
+                            case "P": //priority
+                                priority = Int(alfPartParts[1])
+                                break
+                            
+                            case "F": //optional start date in dd/mm/yyyy format
+                                start_date = dateFormatter.dateFromString(alfPartParts[1])
+                                break
+                            
+                            case "U": //optional end date in dd/mm/yyyy format
+                                end_date = dateFormatter.dateFromString(alfPartParts[1])
+                                break
+                            
+                            case "R": //0 or 1 for each day of the week, starting with Monday
+                                days = NSMutableSet()
+                                var dayCount = 0
+                                for dayCharacter in alfPartParts[1].characters {
+                                    if (dayCharacter == "1") { //only need the ones where it runs on
+                                        if let thisDay = self.fetchCode("Weekday", code: String(dayCount)) {
+                                            days!.addObject(thisDay)
+                                        }
+                                    }
+                                    dayCount += 1
+                                }
+                                break
+                        
+                            default:
+                                break
+                        }
+                    }
+                    
+                    //cope with optional dates
+                    if (start_date == nil) {
+                        start_date = NSDate.distantPast()
+                    }
+                    if (end_date == nil) {
+                        end_date = NSDate.distantFuture()
+                    }
+                    
+                    //check we have something for each field and skip if not
+                    let non_optional_fields = [origin, destination, start_hour, start_minute, end_hour, end_minute, time, priority, start_date, end_date, days, mode]
+                    var all_fields_complete = true
+                    for field in non_optional_fields {
+                        if field == nil {
+                            all_fields_complete = false
+                            break
+                        }
+                    }
+                    
+                    if (all_fields_complete) {
+                        //if have everything, then make the object
+                        let linkEntity = NSManagedObject(entity: linkDescription!, insertIntoManagedObjectContext: self.MOC)
+                        linkEntity.setValue(origin, forKey: "origin")
+                        linkEntity.setValue(destination, forKey: "destination")
+                        linkEntity.setValue(mode, forKey: "mode")
+                        linkEntity.setValue(self.dataSet!, forKey: "dataset")
+                        linkEntity.setValue(start_hour, forKey: "start_hour")
+                        linkEntity.setValue(start_minute, forKey: "start_minute")
+                        linkEntity.setValue(end_hour, forKey: "end_hour")
+                        linkEntity.setValue(end_minute, forKey: "end_minute")
+                        linkEntity.setValue(time, forKey: "time")
+                        linkEntity.setValue(priority, forKey: "priority")
+                        linkEntity.setValue(days, forKey: "runsOn")
+                    }
+                }
+            }
+            }
+        }
+        alfData = [] //free up memory
+    
+        //save the dataset after all the data is loaded
+        if (self.alfProgress < alfData!.count) {
             do {
                 self.progressViewController?.updateIndeterminate("Saving imported data.")
                 self.objectCache = [:] //reset array to free up memory
+                self.dataSet!.setValue(self.alfProgress, forKey: "alfProgress")
                 try self.MOC.save()
                 print("Saved managed objects")
             } catch let error as NSError  {

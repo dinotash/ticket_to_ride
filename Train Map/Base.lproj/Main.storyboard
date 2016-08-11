@@ -692,13 +692,6 @@ Choose a folder containing a .MSN, .MCA, .ALF and .ZTR file as downloaded from d
                         <subviews>
                             <progressIndicator identifier="importDataProgressBar" wantsLayer="YES" fixedFrame="YES" maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="3jb-Cn-A8B">
                                 <rect key="frame" x="20" y="52" width="390" height="20"/>
-                                <connections>
-                                    <binding destination="sYi-6E-yuA" name="value" keyPath="self.importController.importProgress.fractionCompleted" id="5o5-BP-ukX">
-                                        <dictionary key="options">
-                                            <integer key="NSNullPlaceholder" value="0"/>
-                                        </dictionary>
-                                    </binding>
-                                </connections>
                             </progressIndicator>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e3x-7K-EoR">
                                 <rect key="frame" x="18" y="104" width="394" height="17"/>

@@ -33,8 +33,12 @@ class ProgressViewController: NSViewController {
     }
     
     @IBAction func cancelImports(sender: AnyObject) {
+        self.updateIndeterminate("Cancelling import...")
         importController.pendingOperations.importQueue.cancelAllOperations()
-        super.dismissController(nil)
+        while (importController.pendingOperations.importQueue.operationCount > 0) {
+            //wait for cancellation to actually happen
+        }
+        self.importController.dismissViewController(self)
     }
     
     //tell the main thread to update the progress in inderminate fashion
