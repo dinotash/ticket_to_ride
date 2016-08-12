@@ -40,8 +40,25 @@ class ttisImporter: NSOperation {
     var importCount = 0
     var totalCount = 0
     
+    //keep track of each way of looking up cached objects, in preference order
+    let entityKeys: [String : [String]] = [
+        "Weekday": ["number"],
+        "LinkMode": ["string"],
+        "Station": ["crs_main", "crs_subsidiary", "name"],
+        "ATOC": ["code"],
+        "Activity": ["code"],
+        "Category": ["code"],
+        "Catering": ["code"],
+        "Class": ["code"],
+        "Power": ["code"],
+        "Reservation": ["code"],
+        "Sleeper": ["code"],
+        "Tiploc": ["code"]
+    ]
+    
     //cache results for some of the codes we will want to fetch later
     var objectCache: [Duplet<String, String> : NSManagedObject] = [:] //(entityType, ID) : Object
+    let blankObject: NSManagedObject
     
     //initialize the variables used within the thread
     init(chosenFile: NSURL, progressViewController: ProgressViewController?) {
@@ -51,6 +68,8 @@ class ttisImporter: NSOperation {
         self.MOC = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
         self.MOC.persistentStoreCoordinator = coordinator
         self.MOC.undoManager = nil //makes it go faster, apparently
+        let blankDescription = NSEntityDescription.entityForName("Blank", inManagedObjectContext: self.MOC)
+        self.blankObject = NSManagedObject(entity: blankDescription!, insertIntoManagedObjectContext: self.MOC) //use this as a placeholder
         
         //pass along other variables for later use
         self.progressViewController = progressViewController
@@ -100,16 +119,45 @@ class ttisImporter: NSOperation {
         }
     }
     
+    //convenience method to find an object if cached, and fetch it if not
+    private func fetchKeyFromCache(key: Duplet<String, String>) -> NSManagedObject? {
+        if let obj = self.objectCache[key] { //check it's in the array
+            if obj == self.blankObject {
+                return nil //if we know we have nothing
+            }
+            else {
+                return self.objectCache[key]
+            }
+        }
+        else {
+            //else have to go and fetch it
+            let entityType = key.one
+            let keyValue = key.two
+            if let keyNames = self.entityKeys[entityType] {
+                for keyName in keyNames {
+                    let newFetch = NSFetchRequest(entityName: entityType)
+                    newFetch.predicate = NSPredicate(format: keyName + " == %@", keyValue)
+                    if (self.MOC.countForFetchRequest(newFetch, error: nil) > 0) {
+                        do {
+                            //cache the result and return it
+                            let obj = try self.MOC.executeFetchRequest(newFetch)[0] as? NSManagedObject
+                            self.objectCache[key] = obj
+                            return obj
+                        }
+                        catch {
+                        }
+                    }
+                }
+            }
+            self.objectCache[key] = self.blankObject //remember the nil result
+            return nil
+        }
+    }
+    
     //fetch a code matching a given key - or nil if no response
     private func fetchCode(entityName: String, code: String) -> NSManagedObject? {
         let objectKey = Duplet<String, String>(entityName, code)
-        if self.objectCache[objectKey] != nil {
-            return self.objectCache[objectKey]
-        }
-        //couldn't find cached, so try to fetch
-        else {
-            return nil
-        }
+        return self.fetchKeyFromCache(objectKey)
     }
     
     //convenience method to set time values on an NSManagedObject.
@@ -375,6 +423,8 @@ class ttisImporter: NSOperation {
                 categoryEntity.setValue(key, forKey: "code")
                 categoryEntity.setValue(value.category, forKey: "category")
                 categoryEntity.setValue(value.subcategory, forKey: "subcategory")
+                let categoryKey = Duplet<String, String>("Category", key)
+                self.objectCache[categoryKey] = categoryEntity
             }
         }
         
@@ -387,6 +437,8 @@ class ttisImporter: NSOperation {
                 weekdayEntity.setValue(weekday, forKey: "string")
                 let weekdayNumber = weekdays.indexOf(weekday)!
                 weekdayEntity.setValue(weekdayNumber, forKey: "number")
+                let weekdayKey = Duplet<String, String>("Weekday", String(weekdayNumber))
+                self.objectCache[weekdayKey] = weekdayEntity
             }
         }
         
@@ -398,6 +450,8 @@ class ttisImporter: NSOperation {
                 let newModeName = modeName.lowercaseString.capitalizedString
                 let linkModeEntity = NSManagedObject(entity: linkModeDescription!, insertIntoManagedObjectContext: self.MOC)
                 linkModeEntity.setValue(newModeName, forKey: "string")
+                let linkModeKey = Duplet<String, String>("LinkMode", newModeName)
+                self.objectCache[linkModeKey] = linkModeEntity
             }
         }
     }
@@ -489,7 +543,7 @@ class ttisImporter: NSOperation {
                         let caterings = NSMutableSet()
                         for code in cateringCodes {
                             let cateringKey = Duplet<String, String>("Catering", code)
-                            if let cateringResult = self.objectCache[cateringKey] {
+                            if let cateringResult = fetchKeyFromCache(cateringKey) {
                                 caterings.addObject(cateringResult)
                             }
                         }
@@ -689,7 +743,7 @@ class ttisImporter: NSOperation {
             let caterings = NSMutableSet()
             for code in cateringCodes {
                 let cateringCode = Duplet<String, String>("Catering", code)
-                if let cateringResult = self.objectCache[cateringCode] {
+                if let cateringResult = self.fetchKeyFromCache(cateringCode) {
                     caterings.addObject(cateringResult)
                 }
             }
@@ -710,13 +764,37 @@ class ttisImporter: NSOperation {
         }
         
         //save the dataset after all the data is loaded
-        do {
-            self.progressViewController?.updateIndeterminate("Saving imported data.")
-            self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
-            try self.MOC.save()
-            print("Saved managed objects")
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
+        if (lineCount > 0) {
+            do {
+                self.progressViewController?.updateIndeterminate("Saving imported data.")
+                self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
+                try self.MOC.save()
+                print("Saved managed objects")
+            } catch let error as NSError  {
+                print("Could not save \(error), \(error.userInfo)")
+            }
+        }
+    }
+    
+    //rebuild cache if resuming
+    private func rebuildObjectCache() {
+        let totalProgress = self.msnProgress + self.mcaProgress + self.ztrProgress + self.alfProgress
+        if (totalProgress == 0) {
+            return
+        }
+        //go through the things we want in the cache
+        for (entityType, keys) in self.entityKeys {
+            let entityFetch = NSFetchRequest(entityName: entityType)
+            do {
+                let entityResults = try self.MOC.executeFetchRequest(entityFetch)
+                for entityResult in entityResults {
+                    for key in keys { //add it in by each key available
+                        let entityKey = Duplet<String, String>(entityType, key)
+                        self.objectCache[entityKey] = (entityResult as! NSManagedObject)
+                    }
+                }
+            }
+            catch {}
         }
     }
     
@@ -764,8 +842,10 @@ class ttisImporter: NSOperation {
                 self.alfProgress = self.dataSet!.valueForKey("alfProgress") as! Int
             }
             catch {
-
             }
+            
+            //rebuild the object cache to save time
+            self.rebuildObjectCache()
         }
         
         if (self.dataSet == nil) { //create a new dataset if we don't already have one
@@ -837,6 +917,8 @@ class ttisImporter: NSOperation {
         self.importCount = self.msnProgress //skip ahead if we can
         self.totalCount = msnData!.count + mcaData!.count + ztrData!.count + alfData!.count
         
+        let saveMSN = self.msnProgress < msnData!.count //will only need to save if we started before the end
+        
         //now load the underlying data. Start with stations - in the .MSN file
         for msnLine in msnData![self.msnProgress..<msnData!.endIndex] {
             autoreleasepool {
@@ -853,7 +935,7 @@ class ttisImporter: NSOperation {
                 //how to process each line depends on
                 let firstChar = msnLine[msnLine.startIndex]
                 switch(firstChar) {
-                case "A":
+                case "A": //actual station
                     if (msnLine[msnLine.startIndex.advancedBy(5)] != " ") { //this is the timestamp line
                         //make new station - predefined data format, things at certain positions on each row
                         var stationName = msnLine.substring(3, end: 34)
@@ -873,14 +955,18 @@ class ttisImporter: NSOperation {
                         let newStation = NSManagedObject(entity: newStationEntity!, insertIntoManagedObjectContext: self.MOC)
                         newStation.setValue(self.dataSet!, forKey: "dataset")
                         newStation.setValue(stationName, forKey: "name")
+                        self.objectCache[Duplet<String, String>("Station", stationName)] = newStation //cache by name
                         newStation.setValue(cate, forKey: "cate")
                         if (subsidiaryCRS != mainCRS) {
                             newStation.setValue(subsidiaryCRS, forKey: "crs_subsidiary")
+                            self.objectCache[Duplet<String, String>("Station", subsidiaryCRS)] = newStation //cache by CRS
                         }
                         newStation.setValue(mainCRS, forKey: "crs_main")
+                        self.objectCache[Duplet<String, String>("Station", mainCRS)] = newStation //cache by CRS
                         newStation.setValue(easting, forKey: "easting")
                         newStation.setValue(northing, forKey: "northing")
                         newStation.setValue(changeTime, forKey: "change_time")
+                        
                         
                         //create a tiploc entry
                         let tiplocEntityDescription = NSEntityDescription.entityForName("Tiploc", inManagedObjectContext: self.MOC)
@@ -902,7 +988,7 @@ class ttisImporter: NSOperation {
                         var mainName = msnLine.substring(3, end: 35)
                         mainName = mainName.formatName()
                         let stationNameKey = Duplet<String, String>("Station", mainName)
-                        if let thisStation = self.objectCache[stationNameKey] {
+                        if let thisStation = fetchKeyFromCache(stationNameKey) {
                         
                             //get the alias name
                             var aliasName = msnLine.substring(36, end: 66)
@@ -937,7 +1023,7 @@ class ttisImporter: NSOperation {
                     let groupStations = NSMutableSet()
                     for code in groupCodes {
                         let crsKey = Duplet<String, String>("Station", code)
-                        if let thisStation = self.objectCache[crsKey] {
+                        if let thisStation = fetchKeyFromCache(crsKey) {
                             groupStations.addObject(thisStation)
                         }
                     }
@@ -961,7 +1047,7 @@ class ttisImporter: NSOperation {
         msnData = [] //free up memory
         
         //save the dataset after all the data is loaded
-        if (self.msnProgress < msnData!.count) {
+        if (saveMSN) {
             do {
                 self.progressViewController?.updateIndeterminate("Saving imported data.")
                 self.dataSet!.setValue(self.msnProgress, forKey: "msnProgress")
@@ -992,6 +1078,8 @@ class ttisImporter: NSOperation {
         dateFormatter.dateFormat = "dd/MM/yyyy"
         let linkDescription = NSEntityDescription.entityForName("Link", inManagedObjectContext: self.MOC)
         self.importCount += self.alfProgress //skip ahead if we can
+        
+        let saveALF = self.alfProgress < alfData!.count //will only need to save if we started before the end
         
         for alfLine in alfData![self.alfProgress..<alfData!.endIndex] {
             autoreleasepool {
@@ -1131,7 +1219,7 @@ class ttisImporter: NSOperation {
         alfData = [] //free up memory
     
         //save the dataset after all the data is loaded
-        if (self.alfProgress < alfData!.count) {
+        if (saveALF) {
             do {
                 self.progressViewController?.updateIndeterminate("Saving imported data.")
                 self.objectCache = [:] //reset array to free up memory

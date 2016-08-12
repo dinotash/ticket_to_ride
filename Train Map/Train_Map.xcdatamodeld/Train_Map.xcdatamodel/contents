@@ -15,6 +15,7 @@
         <attribute name="string" attributeType="String" syncable="YES"/>
         <relationship name="trains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Train" inverseName="atoc" inverseEntity="Train" syncable="YES"/>
     </entity>
+    <entity name="Blank" syncable="YES"/>
     <entity name="Category" syncable="YES">
         <attribute name="category" attributeType="String" syncable="YES"/>
         <attribute name="code" attributeType="String" syncable="YES"/>
@@ -168,5 +169,6 @@
         <element name="Tiploc" positionX="-45" positionY="36" width="128" height="90"/>
         <element name="Train" positionX="-360" positionY="9" width="128" height="315"/>
         <element name="Weekday" positionX="-342" positionY="27" width="128" height="105"/>
+        <element name="Blank" positionX="-387" positionY="-18" width="128" height="45"/>
     </elements>
 </model>
