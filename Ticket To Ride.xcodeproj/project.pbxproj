@@ -41,17 +41,17 @@
 		E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
 		E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportOperations.swift; sourceTree = "<group>"; };
 		E24F41DF1D471FFB005A4D76 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		E2747FFA1D451E8000C97A1C /* Train Map.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Train Map.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2747FFA1D451E8000C97A1C /* Ticket To Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ticket To Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2747FFD1D451E8000C97A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2747FFF1D451E8000C97A1C /* ImportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewController.swift; sourceTree = "<group>"; };
 		E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Train_Map.xcdatamodel; sourceTree = "<group>"; };
 		E27480041D451E8000C97A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E27480071D451E8000C97A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E27480091D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E274800E1D451E8000C97A1C /* Train MapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Train MapTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E274800E1D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E27480121D451E8000C97A1C /* Train_MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Train_MapTests.swift; sourceTree = "<group>"; };
 		E27480141D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E27480191D451E8000C97A1C /* Train MapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Train MapUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E27480191D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E274801D1D451E8000C97A1C /* Train_MapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Train_MapUITests.swift; sourceTree = "<group>"; };
 		E274801F1D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E29815E21D45A7AF00975BEB /* Train Map.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Train Map.entitlements"; sourceTree = "<group>"; };
@@ -96,9 +96,9 @@
 		E2747FFB1D451E8000C97A1C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E2747FFA1D451E8000C97A1C /* Train Map.app */,
-				E274800E1D451E8000C97A1C /* Train MapTests.xctest */,
-				E27480191D451E8000C97A1C /* Train MapUITests.xctest */,
+				E2747FFA1D451E8000C97A1C /* Ticket To Ride.app */,
+				E274800E1D451E8000C97A1C /* Ticket To Ride.xctest */,
+				E27480191D451E8000C97A1C /* Ticket To Ride.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -142,9 +142,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E2747FF91D451E8000C97A1C /* Train Map */ = {
+		E2747FF91D451E8000C97A1C /* Ticket To Ride */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E27480221D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train Map" */;
+			buildConfigurationList = E27480221D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Ticket To Ride" */;
 			buildPhases = (
 				E2747FF61D451E8000C97A1C /* Sources */,
 				E2747FF71D451E8000C97A1C /* Frameworks */,
@@ -154,14 +154,14 @@
 			);
 			dependencies = (
 			);
-			name = "Train Map";
+			name = "Ticket To Ride";
 			productName = "Train Map";
-			productReference = E2747FFA1D451E8000C97A1C /* Train Map.app */;
+			productReference = E2747FFA1D451E8000C97A1C /* Ticket To Ride.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E274800D1D451E8000C97A1C /* Train MapTests */ = {
+		E274800D1D451E8000C97A1C /* Ticket To RideTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E27480251D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapTests" */;
+			buildConfigurationList = E27480251D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Ticket To RideTests" */;
 			buildPhases = (
 				E274800A1D451E8000C97A1C /* Sources */,
 				E274800B1D451E8000C97A1C /* Frameworks */,
@@ -172,14 +172,14 @@
 			dependencies = (
 				E27480101D451E8000C97A1C /* PBXTargetDependency */,
 			);
-			name = "Train MapTests";
+			name = "Ticket To RideTests";
 			productName = "Train MapTests";
-			productReference = E274800E1D451E8000C97A1C /* Train MapTests.xctest */;
+			productReference = E274800E1D451E8000C97A1C /* Ticket To Ride.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		E27480181D451E8000C97A1C /* Train MapUITests */ = {
+		E27480181D451E8000C97A1C /* Ticket To RideUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E27480281D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapUITests" */;
+			buildConfigurationList = E27480281D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Ticket To RideUITests" */;
 			buildPhases = (
 				E27480151D451E8000C97A1C /* Sources */,
 				E27480161D451E8000C97A1C /* Frameworks */,
@@ -190,9 +190,9 @@
 			dependencies = (
 				E274801B1D451E8000C97A1C /* PBXTargetDependency */,
 			);
-			name = "Train MapUITests";
+			name = "Ticket To RideUITests";
 			productName = "Train MapUITests";
-			productReference = E27480191D451E8000C97A1C /* Train MapUITests.xctest */;
+			productReference = E27480191D451E8000C97A1C /* Ticket To Ride.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -223,7 +223,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E2747FF51D451E8000C97A1C /* Build configuration list for PBXProject "Train Map" */;
+			buildConfigurationList = E2747FF51D451E8000C97A1C /* Build configuration list for PBXProject "Ticket To Ride" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -236,9 +236,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E2747FF91D451E8000C97A1C /* Train Map */,
-				E274800D1D451E8000C97A1C /* Train MapTests */,
-				E27480181D451E8000C97A1C /* Train MapUITests */,
+				E2747FF91D451E8000C97A1C /* Ticket To Ride */,
+				E274800D1D451E8000C97A1C /* Ticket To RideTests */,
+				E27480181D451E8000C97A1C /* Ticket To RideUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -305,12 +305,12 @@
 /* Begin PBXTargetDependency section */
 		E27480101D451E8000C97A1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E2747FF91D451E8000C97A1C /* Train Map */;
+			target = E2747FF91D451E8000C97A1C /* Ticket To Ride */;
 			targetProxy = E274800F1D451E8000C97A1C /* PBXContainerItemProxy */;
 		};
 		E274801B1D451E8000C97A1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E2747FF91D451E8000C97A1C /* Train Map */;
+			target = E2747FF91D451E8000C97A1C /* Ticket To Ride */;
 			targetProxy = E274801A1D451E8000C97A1C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -416,8 +416,8 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Train Map/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-Map";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinotash.ticketToRide;
+				PRODUCT_NAME = "Ticket To Ride";
 			};
 			name = Debug;
 		};
@@ -428,8 +428,8 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Train Map/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-Map";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dinotash.ticketToRide;
+				PRODUCT_NAME = "Ticket To Ride";
 			};
 			name = Release;
 		};
@@ -441,8 +441,8 @@
 				INFOPLIST_FILE = "Train MapTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Train Map.app/Contents/MacOS/Train Map";
+				PRODUCT_NAME = "Ticket To Ride";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ticket To Ride.app/Contents/MacOS/Ticket To Ride";
 			};
 			name = Debug;
 		};
@@ -454,8 +454,8 @@
 				INFOPLIST_FILE = "Train MapTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Train Map.app/Contents/MacOS/Train Map";
+				PRODUCT_NAME = "Ticket To Ride";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ticket To Ride.app/Contents/MacOS/Ticket To Ride";
 			};
 			name = Release;
 		};
@@ -466,7 +466,7 @@
 				INFOPLIST_FILE = "Train MapUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Ticket To Ride";
 				TEST_TARGET_NAME = "Train Map";
 			};
 			name = Debug;
@@ -478,7 +478,7 @@
 				INFOPLIST_FILE = "Train MapUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinosaursandmoustaches.Train-MapUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Ticket To Ride";
 				TEST_TARGET_NAME = "Train Map";
 			};
 			name = Release;
@@ -486,7 +486,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E2747FF51D451E8000C97A1C /* Build configuration list for PBXProject "Train Map" */ = {
+		E2747FF51D451E8000C97A1C /* Build configuration list for PBXProject "Ticket To Ride" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E27480201D451E8000C97A1C /* Debug */,
@@ -495,7 +495,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E27480221D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train Map" */ = {
+		E27480221D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Ticket To Ride" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E27480231D451E8000C97A1C /* Debug */,
@@ -504,7 +504,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E27480251D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapTests" */ = {
+		E27480251D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Ticket To RideTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E27480261D451E8000C97A1C /* Debug */,
@@ -513,7 +513,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E27480281D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Train MapUITests" */ = {
+		E27480281D451E8000C97A1C /* Build configuration list for PBXNativeTarget "Ticket To RideUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E27480291D451E8000C97A1C /* Debug */,

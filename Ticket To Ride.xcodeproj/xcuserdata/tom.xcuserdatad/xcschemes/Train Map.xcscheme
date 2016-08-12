@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E2747FF91D451E8000C97A1C"
-               BuildableName = "Train Map.app"
-               BlueprintName = "Train Map"
-               ReferencedContainer = "container:Train Map.xcodeproj">
+               BuildableName = "Ticket To Ride.app"
+               BlueprintName = "Ticket To Ride"
+               ReferencedContainer = "container:Ticket To Ride.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E274800D1D451E8000C97A1C"
-               BuildableName = "Train MapTests.xctest"
-               BlueprintName = "Train MapTests"
-               ReferencedContainer = "container:Train Map.xcodeproj">
+               BuildableName = "Ticket To Ride.xctest"
+               BlueprintName = "Ticket To RideTests"
+               ReferencedContainer = "container:Ticket To Ride.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E27480181D451E8000C97A1C"
-               BuildableName = "Train MapUITests.xctest"
-               BlueprintName = "Train MapUITests"
-               ReferencedContainer = "container:Train Map.xcodeproj">
+               BuildableName = "Ticket To Ride.xctest"
+               BlueprintName = "Ticket To RideUITests"
+               ReferencedContainer = "container:Ticket To Ride.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -53,9 +53,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2747FF91D451E8000C97A1C"
-            BuildableName = "Train Map.app"
-            BlueprintName = "Train Map"
-            ReferencedContainer = "container:Train Map.xcodeproj">
+            BuildableName = "Ticket To Ride.app"
+            BlueprintName = "Ticket To Ride"
+            ReferencedContainer = "container:Ticket To Ride.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -76,9 +76,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2747FF91D451E8000C97A1C"
-            BuildableName = "Train Map.app"
-            BlueprintName = "Train Map"
-            ReferencedContainer = "container:Train Map.xcodeproj">
+            BuildableName = "Ticket To Ride.app"
+            BlueprintName = "Ticket To Ride"
+            ReferencedContainer = "container:Ticket To Ride.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -95,9 +95,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2747FF91D451E8000C97A1C"
-            BuildableName = "Train Map.app"
-            BlueprintName = "Train Map"
-            ReferencedContainer = "container:Train Map.xcodeproj">
+            BuildableName = "Ticket To Ride.app"
+            BlueprintName = "Ticket To Ride"
+            ReferencedContainer = "container:Ticket To Ride.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
