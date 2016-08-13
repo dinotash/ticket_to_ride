@@ -90,7 +90,7 @@ class ttisImporter: NSOperation {
                 print("Saved imported data after loading " + after)
             } catch {
                 let nserror = error as NSError
-                NSApplication.sharedApplication().presentError(nserror)
+                print(nserror)
             }
         }
     }
@@ -504,7 +504,7 @@ class ttisImporter: NSOperation {
         var trainCount = 0
         self.importCount += arrayStart
         var lineCount = 0
-        for mcaLine in array {
+        for mcaLine in array[arrayStart..<array.count] {
             self.importCount += 1
             
             if (filename == "mca") {
@@ -589,14 +589,15 @@ class ttisImporter: NSOperation {
                         if (trainCount % updateLimit == 0) {
                             if (lineCount > 0) { //don't do it just on resuming
                                 //save the dataset after all the data is loaded
-                                self.progressViewController?.updateIndeterminate("Saving imported data.")
+                                self.progressViewController?.updateDeterminate("Saving imported data.", doubleValue: 0, updateBar: false)
                                 if (filename == "mca") {
-                                    self.dataSet!.setValue(self.mcaProgress, forKey: "mcaProgress")
+                                    self.dataSet!.setValue(self.mcaProgress - 1, forKey: "mcaProgress") //less one, because we will need to go back and re-load the details from the BS line for the first train next time
+                                    self.saveImport(String(self.mcaProgress) + " lines from MCA file")
                                 }
                                 if (filename == "ztr") {
-                                    self.dataSet!.setValue(self.ztrProgress, forKey: "ztrProgress")
+                                    self.dataSet!.setValue(self.ztrProgress - 1, forKey: "ztrProgress")
+                                    self.saveImport(String(self.ztrProgress) + " lines from ZTR file")
                                 }
-                                self.saveImport(String(trainCount) + " trains")
                             }
                         }
                     }
@@ -785,16 +786,23 @@ class ttisImporter: NSOperation {
                 }
             }
             newTrain.setValue(runsOn, forKey: "runsOn")
-        }
-        
-        //save the dataset after all the data is loaded
-        if (lineCount > 0) {
-            self.progressViewController?.updateIndeterminate("Saving imported data.")
-            self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
-            self.saveImport("all trains from " + filename + " file")
+            
+            //save the dataset after all the data is loaded
+            if (lineCount > 0) { //don't do it just on resuming
+                //save the dataset after all the data is loaded
+                self.progressViewController?.updateDeterminate("Saving imported data.", doubleValue: 0, updateBar: false)
+                if (filename == "mca") {
+                    self.dataSet!.setValue(self.mcaProgress, forKey: "mcaProgress")
+                    self.saveImport("all train data from MCA file")
+                }
+                if (filename == "ztr") {
+                    self.dataSet!.setValue(self.ztrProgress, forKey: "ztrProgress")
+                    self.saveImport(String(self.ztrProgress) + "all train data from ZTR file")
+                }
+            }
         }
     }
-    
+
     //rebuild cache if resuming
     private func rebuildObjectCache() {
         let totalProgress = self.msnProgress + self.mcaProgress + self.ztrProgress + self.alfProgress
@@ -855,7 +863,7 @@ class ttisImporter: NSOperation {
             
             //find out where we got to last time
             do {
-                self.dataSet = try (self.MOC.executeFetchRequest(samedataSetFetch)[0] as! NSManagedObject)
+                self.dataSet = try self.MOC.executeFetchRequest(samedataSetFetch)[0] as? NSManagedObject
                 self.msnProgress = self.dataSet!.valueForKey("msnProgress") as! Int
                 self.mcaProgress = self.dataSet!.valueForKey("mcaProgress") as! Int
                 self.ztrProgress = self.dataSet!.valueForKey("ztrProgress") as! Int
@@ -1074,6 +1082,7 @@ class ttisImporter: NSOperation {
         
         //save the dataset after all the data is loaded
         if (saveMSN) {
+            self.progressViewController?.updateDeterminate("Saving imported data.", doubleValue: 0, updateBar: false)
             self.dataSet!.setValue(self.msnProgress, forKey: "msnProgress")
             self.saveImport("stations")
         }
@@ -1243,7 +1252,8 @@ class ttisImporter: NSOperation {
     
         //save the dataset after all the data is loaded
         if (saveALF) {
-            self.dataSet!.setValue(self.alfProgress, forKey: "msnProgress")
+            self.progressViewController?.updateDeterminate("Saving imported data.", doubleValue: 0, updateBar: false)
+            self.dataSet!.setValue(self.alfProgress, forKey: "alfProgress")
             self.saveImport("fixed link data")
         }
     }

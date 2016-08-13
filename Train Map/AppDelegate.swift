@@ -67,7 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
             let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("TicketToRide.sqllite")
             do {
-                let options = [NSSQLitePragmasOption: ["synchronous": "NORMAL", "journal_mode": "WAL"]]
+                let options = [NSSQLitePragmasOption: ["synchronous": "NORMAL", "journal_mode": "delete"]]
                 try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: options)
             } catch {
                 failError = error as NSError

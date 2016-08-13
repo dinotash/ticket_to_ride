@@ -629,18 +629,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="189"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DfF-KR-7JI">
-                                <rect key="frame" x="20" y="55" width="32" height="32"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="NSCaution" id="n3n-w6-uef"/>
-                            </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N3K-Wf-7ej">
-                                <rect key="frame" x="58" y="63" width="404" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Importing data can take several hours and 4GB of disk space." id="vVN-AW-2ri">
-                                    <font key="font" metaFont="systemBold"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Eyj-Ic-dFb">
                                 <rect key="frame" x="267" y="13" width="82" height="32"/>
                                 <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Tsk-FB-xi9">
@@ -671,6 +659,14 @@ Gw
                                     <string key="title">You can import a new set of timetable data from files on your computer. 
 
 Choose a folder containing a .MSN, .MCA, .ALF and .ZTR file as downloaded from data.atoc.org.</string>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N3K-Wf-7ej">
+                                <rect key="frame" x="18" y="70" width="419" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Importing data can take around two hours and 400MB of disk space." id="vVN-AW-2ri">
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -776,7 +772,4 @@ Gw
             <point key="canvasLocation" x="35" y="714"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="NSCaution" width="32" height="32"/>
-    </resources>
 </document>

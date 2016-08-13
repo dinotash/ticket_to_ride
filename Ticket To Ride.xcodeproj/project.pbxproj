@@ -56,6 +56,7 @@
 		E274801F1D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TicketToRide.entitlements; sourceTree = "<group>"; };
 		E2A2E30F1D568F7F00081451 /* Duplet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Duplet.swift; sourceTree = "<group>"; };
+		E2CE379F1D5FC167006C6336 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -323,6 +324,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				E27480071D451E8000C97A1C /* Base */,
+				E2CE379F1D5FC167006C6336 /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";

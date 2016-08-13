@@ -60,6 +60,7 @@ class ImportViewController: NSViewController {
             let ttisImport = ttisImporter(chosenFile: dialog.URL!, progressViewController: progressViewController)
             ttisImport.completionBlock = {
                 if ttisImport.cancelled {
+                    ttisImport.MOC.rollback()
                     return
                 }
                 //close the progress view controller and let the user know
