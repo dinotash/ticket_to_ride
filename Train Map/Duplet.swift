@@ -1,6 +1,6 @@
 //
 //  Duplet.swift
-//  Train Map
+//  Ticket To Ride
 //
 //  Created by Tom Curtis on 6 Aug 2016.
 //  Copyright © 2016 Tom Curtis. All rights reserved.

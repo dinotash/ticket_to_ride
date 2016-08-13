@@ -1,6 +1,6 @@
 //
 //  ImportOperations.swift
-//  Train Map
+//  Ticket To Ride
 //
 //  Created by Tom Curtis on 5 Aug 2016.
 //  Copyright © 2016 Tom Curtis. All rights reserved.
@@ -28,7 +28,7 @@ class ttisImporter: NSOperation {
     //keep track of variables set outside the operation -> passed in on init()
     let MOC: NSManagedObjectContext //Need a separate managed object context for the separate thread
     let chosenFile: NSURL //file we selected
-    let progressViewController: ProgressViewController?
+    let progressViewController: ImportProgressViewController?
     let updateLimit = 10000 //how many iterations before updating progress bar
     var dataSet: NSManagedObject?
     
@@ -61,7 +61,7 @@ class ttisImporter: NSOperation {
     let blankObject: NSManagedObject
     
     //initialize the variables used within the thread
-    init(chosenFile: NSURL, progressViewController: ProgressViewController?) {
+    init(chosenFile: NSURL, progressViewController: ImportProgressViewController?) {
         
         //create MOC from scratch
         let coordinator = (NSApplication.sharedApplication().delegate as! AppDelegate).persistentStoreCoordinator
@@ -77,6 +77,22 @@ class ttisImporter: NSOperation {
         super.init()
         
         self.qualityOfService = .Utility //don't need to hold things up immediately for this
+    }
+    
+    private func saveImport(after: String) {
+        // Performs the save action for the import thread, which is to send the save: message to the thread's managed object context. Any encountered errors are presented to the user.
+        if !self.MOC.commitEditing() {
+            NSLog("\(NSStringFromClass(self.dynamicType)) unable to commit editing before saving")
+        }
+        if self.MOC.hasChanges {
+            do {
+                try self.MOC.save()
+                print("Saved imported data after loading " + after)
+            } catch {
+                let nserror = error as NSError
+                NSApplication.sharedApplication().presentError(nserror)
+            }
+        }
     }
     
     //when loading files, check each expected file exists
@@ -228,8 +244,7 @@ class ttisImporter: NSOperation {
     //define codes based on data spec, and add to core data if not already present
     private func loadConstants() {
         //update status
-        self.progressViewController?.progressLabel.stringValue = "Importing constants and codes into database."
-        self.progressViewController?.updateIndeterminate("Woo eggs")
+        self.progressViewController?.updateIndeterminate("Importing constants and codes into database.")
         
         let atoc_codes: [String: String] = [
             "AW": "Arriva Trains Wales",
@@ -491,9 +506,18 @@ class ttisImporter: NSOperation {
         var lineCount = 0
         for mcaLine in array {
             self.importCount += 1
+            
+            if (filename == "mca") {
+                self.mcaProgress += 1
+            }
+            if (filename == "ztr") {
+                self.ztrProgress += 1
+            }
+            
             lineCount += 1
             trainDataCount += 1
             if self.cancelled {
+                self.MOC.rollback()
                 return
             }
             
@@ -565,14 +589,14 @@ class ttisImporter: NSOperation {
                         if (trainCount % updateLimit == 0) {
                             if (lineCount > 0) { //don't do it just on resuming
                                 //save the dataset after all the data is loaded
-                                do {
-                                    self.progressViewController?.updateIndeterminate("Saving imported data.")
-                                    self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
-                                    try self.MOC.save()
-                                    print("Saved managed objects")
-                                } catch let error as NSError  {
-                                    print("Could not save \(error), \(error.userInfo)")
+                                self.progressViewController?.updateIndeterminate("Saving imported data.")
+                                if (filename == "mca") {
+                                    self.dataSet!.setValue(self.mcaProgress, forKey: "mcaProgress")
                                 }
+                                if (filename == "ztr") {
+                                    self.dataSet!.setValue(self.ztrProgress, forKey: "ztrProgress")
+                                }
+                                self.saveImport(String(trainCount) + " trains")
                             }
                         }
                     }
@@ -765,14 +789,9 @@ class ttisImporter: NSOperation {
         
         //save the dataset after all the data is loaded
         if (lineCount > 0) {
-            do {
-                self.progressViewController?.updateIndeterminate("Saving imported data.")
-                self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
-                try self.MOC.save()
-                print("Saved managed objects")
-            } catch let error as NSError  {
-                print("Could not save \(error), \(error.userInfo)")
-            }
+            self.progressViewController?.updateIndeterminate("Saving imported data.")
+            self.dataSet!.setValue(arrayStart + lineCount, forKey: filename + "Progress")
+            self.saveImport("all trains from " + filename + " file")
         }
     }
     
@@ -801,6 +820,7 @@ class ttisImporter: NSOperation {
     override func main() {
         //check for cancellation at the start - will do so again during the life
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         
@@ -876,26 +896,31 @@ class ttisImporter: NSOperation {
         let ztrFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".ztr")
         let alfFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".alf")
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         self.progressViewController?.updateIndeterminate("Loading " + msnFilePath.lastPathComponent!.uppercaseString)
         var msnData = self.readFileLines(msnFilePath)
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         self.progressViewController?.updateIndeterminate("Loading " + mcaFilePath.lastPathComponent!.uppercaseString)
         var mcaData = self.readFileLines(mcaFilePath)
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         self.progressViewController?.updateIndeterminate("Loading " + ztrFilePath.lastPathComponent!.uppercaseString)
         var ztrData = self.readFileLines(ztrFilePath)
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         self.progressViewController?.updateIndeterminate("Loading " + alfFilePath.lastPathComponent!.uppercaseString)
         var alfData = self.readFileLines(alfFilePath)
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         
@@ -925,6 +950,7 @@ class ttisImporter: NSOperation {
             self.msnProgress += 1
             self.importCount += 1
             if self.cancelled {
+                self.MOC.rollback()
                 return
             }
             let progressString = "Loading station data - line " + progressNumberFormatter.stringFromNumber(self.msnProgress)! + " of " + progressNumberFormatter.stringFromNumber(msnData!.count)! + "."
@@ -1048,22 +1074,18 @@ class ttisImporter: NSOperation {
         
         //save the dataset after all the data is loaded
         if (saveMSN) {
-            do {
-                self.progressViewController?.updateIndeterminate("Saving imported data.")
-                self.dataSet!.setValue(self.msnProgress, forKey: "msnProgress")
-                try self.MOC.save()
-                print("Saved managed objects")
-            } catch let error as NSError  {
-                NSLog("Could not save \(error), \(error.userInfo)")
-            }
+            self.dataSet!.setValue(self.msnProgress, forKey: "msnProgress")
+            self.saveImport("stations")
         }
         
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         processTrainArray(mcaData!, arrayStart: self.mcaProgress, filename: "mca")
         
         if self.cancelled {
+            self.MOC.rollback()
             return
         }
         
@@ -1086,6 +1108,7 @@ class ttisImporter: NSOperation {
             self.alfProgress += 1
             self.importCount += 1
             if self.cancelled {
+                self.MOC.rollback()
                 return
             }
             let progressString = "Loading fixed link data - line " + progressNumberFormatter.stringFromNumber(self.alfProgress)! + " of " + progressNumberFormatter.stringFromNumber(alfData!.count)! + "."
@@ -1220,15 +1243,8 @@ class ttisImporter: NSOperation {
     
         //save the dataset after all the data is loaded
         if (saveALF) {
-            do {
-                self.progressViewController?.updateIndeterminate("Saving imported data.")
-                self.objectCache = [:] //reset array to free up memory
-                self.dataSet!.setValue(self.alfProgress, forKey: "alfProgress")
-                try self.MOC.save()
-                print("Saved managed objects")
-            } catch let error as NSError  {
-                NSLog("Could not save \(error), \(error.userInfo)")
-            }
+            self.dataSet!.setValue(self.alfProgress, forKey: "msnProgress")
+            self.saveImport("fixed link data")
         }
     }
 }

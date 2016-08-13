@@ -1,6 +1,6 @@
 //
 //  ProgressViewController.swift
-//  Train Map
+//  Ticket To Ride
 //
 //  Created by Tom Curtis on 5 Aug 2016.
 //  Copyright © 2016 Tom Curtis. All rights reserved.
@@ -11,7 +11,7 @@ import Cocoa
 
 class ProgressViewController: NSViewController {
     
-    @IBOutlet weak var importController: ImportViewController!
+    @IBOutlet weak var parentController: NSViewController!
     @IBOutlet weak var progressBar: NSProgressIndicator!
     @IBOutlet weak var progressLabel: NSTextField!
     
@@ -30,15 +30,6 @@ class ProgressViewController: NSViewController {
         didSet {
             // Update the view, if already loaded.
         }
-    }
-    
-    @IBAction func cancelImports(sender: AnyObject) {
-        self.updateIndeterminate("Cancelling import...")
-        importController.pendingOperations.importQueue.cancelAllOperations()
-        while (importController.pendingOperations.importQueue.operationCount > 0) {
-            //wait for cancellation to actually happen
-        }
-        self.importController.dismissViewController(self)
     }
     
     //tell the main thread to update the progress in inderminate fashion
@@ -61,5 +52,17 @@ class ProgressViewController: NSViewController {
             }
         })
     }
+}
+
+class ImportProgressViewController: ProgressViewController {
+    @IBOutlet weak var importController: ImportViewController!
     
+    @IBAction func cancelImports(sender: AnyObject) {
+        self.updateIndeterminate("Cancelling import...")
+        importController.pendingOperations.importQueue.cancelAllOperations()
+        while (importController.pendingOperations.importQueue.operationCount > 0) {
+            //wait for cancellation to actually happen
+        }
+        self.importController.dismissViewController(self)
+    }
 }

@@ -1,6 +1,6 @@
 //
 //  String.swift
-//  Train Map
+//  Ticket To Ride
 //
 //  Created by Tom Curtis on 25 Jul 2016.
 //  Copyright © 2016 Tom Curtis. All rights reserved.

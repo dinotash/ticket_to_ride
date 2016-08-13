@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  Train Map
+//  Ticket To Ride
 //
 //  Created by Tom Curtis on 24 Jul 2016.
 //  Copyright © 2016 Tom Curtis. All rights reserved.
@@ -11,7 +11,7 @@ import Cocoa
 
 class ImportViewController: NSViewController {
     
-    var progressViewController: ProgressViewController?
+    var progressViewController: ImportProgressViewController?
     var pendingOperations: PendingOperations!
     
     // Retreive the managedObjectContext from AppDelegate
@@ -49,7 +49,7 @@ class ImportViewController: NSViewController {
             dialog.performClose(nil)
             
             //display the progress dialog box
-            if let pvc = storyboard!.instantiateControllerWithIdentifier("importProgressViewController") as? ProgressViewController {
+            if let pvc = storyboard!.instantiateControllerWithIdentifier("importProgressViewController") as? ImportProgressViewController {
                 self.progressViewController = pvc
                 presentViewControllerAsSheet(self.progressViewController!)
                 self.progressViewController!.importController = self

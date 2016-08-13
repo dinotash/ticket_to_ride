@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Train Map
+//  Ticket To Ride
 //
 //  Created by Tom Curtis on 24 Jul 2016.
 //  Copyright © 2016 Tom Curtis. All rights reserved.
@@ -22,15 +22,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Core Data stack
 
     lazy var applicationDocumentsDirectory: NSURL = {
-        // The directory the application uses to store the Core Data store file. This code uses a directory named "com.dinosaursandmoustaches.Train_Map" in the user's Application Support directory.
+        // The directory the application uses to store the Core Data store file. This code uses a directory named "com.dinotash.TicketToRide" in the user's Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.ApplicationSupportDirectory, inDomains: .UserDomainMask)
         let appSupportURL = urls[urls.count - 1]
-        return appSupportURL.URLByAppendingPathComponent("com.dinosaursandmoustaches.Train_Map")
+        return appSupportURL.URLByAppendingPathComponent("com.dinotash.TicketToRide")
     }()
 
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = NSBundle.mainBundle().URLForResource("Train_Map", withExtension: "momd")!
+        let modelURL = NSBundle.mainBundle().URLForResource("TicketToRide", withExtension: "momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
     }()
 
@@ -65,9 +65,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var coordinator: NSPersistentStoreCoordinator? = nil
         if failError == nil {
             coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-            let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("CocoaAppCD.storedata")
+            let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("TicketToRide.sqllite")
             do {
-                try coordinator!.addPersistentStoreWithType(NSXMLStoreType, configuration: nil, URL: url, options: nil)
+                let options = [NSSQLitePragmasOption: ["synchronous": "NORMAL", "journal_mode": "WAL"]]
+                try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: options)
             } catch {
                 failError = error as NSError
             }

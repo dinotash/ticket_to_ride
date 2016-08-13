@@ -12,11 +12,11 @@
 		E24F41E01D471FFB005A4D76 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24F41DF1D471FFB005A4D76 /* String.swift */; };
 		E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFD1D451E8000C97A1C /* AppDelegate.swift */; };
 		E27480001D451E8000C97A1C /* ImportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFF1D451E8000C97A1C /* ImportViewController.swift */; };
-		E27480031D451E8000C97A1C /* Train_Map.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E27480011D451E8000C97A1C /* Train_Map.xcdatamodeld */; };
+		E27480031D451E8000C97A1C /* TicketToRide.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */; };
 		E27480051D451E8000C97A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E27480041D451E8000C97A1C /* Assets.xcassets */; };
 		E27480081D451E8000C97A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27480061D451E8000C97A1C /* Main.storyboard */; };
-		E27480131D451E8000C97A1C /* Train_MapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27480121D451E8000C97A1C /* Train_MapTests.swift */; };
-		E274801E1D451E8000C97A1C /* Train_MapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E274801D1D451E8000C97A1C /* Train_MapUITests.swift */; };
+		E27480131D451E8000C97A1C /* Ticket_To_RideTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27480121D451E8000C97A1C /* Ticket_To_RideTests.swift */; };
+		E274801E1D451E8000C97A1C /* Ticket_To_RideUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E274801D1D451E8000C97A1C /* Ticket_To_RideUITests.swift */; };
 		E2A2E3101D568F7F00081451 /* Duplet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A2E30F1D568F7F00081451 /* Duplet.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,17 +44,17 @@
 		E2747FFA1D451E8000C97A1C /* Ticket To Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ticket To Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2747FFD1D451E8000C97A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2747FFF1D451E8000C97A1C /* ImportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewController.swift; sourceTree = "<group>"; };
-		E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Train_Map.xcdatamodel; sourceTree = "<group>"; };
+		E27480021D451E8000C97A1C /* TicketToRide.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TicketToRide.xcdatamodel; sourceTree = "<group>"; };
 		E27480041D451E8000C97A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E27480071D451E8000C97A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E27480091D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E274800E1D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E27480121D451E8000C97A1C /* Train_MapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Train_MapTests.swift; sourceTree = "<group>"; };
+		E27480121D451E8000C97A1C /* Ticket_To_RideTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticket_To_RideTests.swift; sourceTree = "<group>"; };
 		E27480141D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E27480191D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E274801D1D451E8000C97A1C /* Train_MapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Train_MapUITests.swift; sourceTree = "<group>"; };
+		E274801D1D451E8000C97A1C /* Ticket_To_RideUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticket_To_RideUITests.swift; sourceTree = "<group>"; };
 		E274801F1D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E29815E21D45A7AF00975BEB /* Train Map.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Train Map.entitlements"; sourceTree = "<group>"; };
+		E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TicketToRide.entitlements; sourceTree = "<group>"; };
 		E2A2E30F1D568F7F00081451 /* Duplet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Duplet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,9 +86,9 @@
 		E2747FF11D451E7F00C97A1C = {
 			isa = PBXGroup;
 			children = (
-				E2747FFC1D451E8000C97A1C /* Train Map */,
-				E27480111D451E8000C97A1C /* Train MapTests */,
-				E274801C1D451E8000C97A1C /* Train MapUITests */,
+				E2747FFC1D451E8000C97A1C /* Ticket To Ride */,
+				E27480111D451E8000C97A1C /* Ticket_To_RideTests */,
+				E274801C1D451E8000C97A1C /* Ticket_To_RideUITests */,
 				E2747FFB1D451E8000C97A1C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,10 +103,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E2747FFC1D451E8000C97A1C /* Train Map */ = {
+		E2747FFC1D451E8000C97A1C /* Ticket To Ride */ = {
 			isa = PBXGroup;
 			children = (
-				E29815E21D45A7AF00975BEB /* Train Map.entitlements */,
+				E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */,
 				E2747FFD1D451E8000C97A1C /* AppDelegate.swift */,
 				E2747FFF1D451E8000C97A1C /* ImportViewController.swift */,
 				E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */,
@@ -116,26 +116,29 @@
 				E27480041D451E8000C97A1C /* Assets.xcassets */,
 				E27480061D451E8000C97A1C /* Main.storyboard */,
 				E27480091D451E8000C97A1C /* Info.plist */,
-				E27480011D451E8000C97A1C /* Train_Map.xcdatamodeld */,
+				E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */,
 			);
+			name = "Ticket To Ride";
 			path = "Train Map";
 			sourceTree = "<group>";
 		};
-		E27480111D451E8000C97A1C /* Train MapTests */ = {
+		E27480111D451E8000C97A1C /* Ticket_To_RideTests */ = {
 			isa = PBXGroup;
 			children = (
-				E27480121D451E8000C97A1C /* Train_MapTests.swift */,
+				E27480121D451E8000C97A1C /* Ticket_To_RideTests.swift */,
 				E27480141D451E8000C97A1C /* Info.plist */,
 			);
+			name = Ticket_To_RideTests;
 			path = "Train MapTests";
 			sourceTree = "<group>";
 		};
-		E274801C1D451E8000C97A1C /* Train MapUITests */ = {
+		E274801C1D451E8000C97A1C /* Ticket_To_RideUITests */ = {
 			isa = PBXGroup;
 			children = (
-				E274801D1D451E8000C97A1C /* Train_MapUITests.swift */,
+				E274801D1D451E8000C97A1C /* Ticket_To_RideUITests.swift */,
 				E274801F1D451E8000C97A1C /* Info.plist */,
 			);
+			name = Ticket_To_RideUITests;
 			path = "Train MapUITests";
 			sourceTree = "<group>";
 		};
@@ -279,7 +282,7 @@
 				E2498DB91D555DF100EFC7D6 /* ImportOperations.swift in Sources */,
 				E27480001D451E8000C97A1C /* ImportViewController.swift in Sources */,
 				E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */,
-				E27480031D451E8000C97A1C /* Train_Map.xcdatamodeld in Sources */,
+				E27480031D451E8000C97A1C /* TicketToRide.xcdatamodeld in Sources */,
 				E2A2E3101D568F7F00081451 /* Duplet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,7 +291,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E27480131D451E8000C97A1C /* Train_MapTests.swift in Sources */,
+				E27480131D451E8000C97A1C /* Ticket_To_RideTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,7 +299,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E274801E1D451E8000C97A1C /* Train_MapUITests.swift in Sources */,
+				E274801E1D451E8000C97A1C /* Ticket_To_RideUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,13 +528,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		E27480011D451E8000C97A1C /* Train_Map.xcdatamodeld */ = {
+		E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */,
+				E27480021D451E8000C97A1C /* TicketToRide.xcdatamodel */,
 			);
-			currentVersion = E27480021D451E8000C97A1C /* Train_Map.xcdatamodel */;
-			path = Train_Map.xcdatamodeld;
+			currentVersion = E27480021D451E8000C97A1C /* TicketToRide.xcdatamodel */;
+			path = TicketToRide.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
