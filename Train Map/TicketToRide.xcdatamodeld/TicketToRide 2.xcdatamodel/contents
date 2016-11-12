@@ -109,8 +109,10 @@
         <attribute name="crs_main" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="crs_subsidiary" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="easting" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="northing" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="alias" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Alias" inverseName="station" inverseEntity="Alias" syncable="YES"/>
         <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="stations" inverseEntity="Dataset" syncable="YES"/>
         <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Group" inverseName="stations" inverseEntity="Group" syncable="YES"/>
@@ -166,7 +168,7 @@
         <element name="Reservation" positionX="-369" positionY="0" width="128" height="90"/>
         <element name="RouteEntry" positionX="-369" positionY="0" width="128" height="285"/>
         <element name="Sleeper" positionX="-360" positionY="9" width="128" height="90"/>
-        <element name="Station" positionX="-279" positionY="126" width="128" height="255"/>
+        <element name="Station" positionX="-279" positionY="126" width="128" height="285"/>
         <element name="Tiploc" positionX="-45" positionY="36" width="128" height="90"/>
         <element name="Train" positionX="-360" positionY="9" width="128" height="315"/>
         <element name="Weekday" positionX="-342" positionY="27" width="128" height="105"/>

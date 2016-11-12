@@ -15,22 +15,16 @@ class ImportViewController: NSViewController {
     var pendingOperations: PendingOperations!
     
     // Retreive the managedObjectContext from AppDelegate
-    let mainMOC = (NSApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+    let mainMOC = (NSApplication.shared().delegate as! AppDelegate).managedObjectContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
-
-    override var representedObject: AnyObject? {
-        didSet {
-        // Update the view, if already loaded.
-        }
-    }
     
     //Find and load new data set
-    @IBAction func loadNewData(sender: AnyObject) {
+    @IBAction func loadNewData(_ sender: AnyObject) {
     
         //data file types to use
         let dataFileTypes = ["alf", "mca", "msn", "ztr"]
@@ -49,7 +43,7 @@ class ImportViewController: NSViewController {
             dialog.performClose(nil)
             
             //display the progress dialog box
-            if let pvc = storyboard!.instantiateControllerWithIdentifier("importProgressViewController") as? ImportProgressViewController {
+            if let pvc = storyboard!.instantiateController(withIdentifier: "importProgressViewController") as? ImportProgressViewController {
                 self.progressViewController = pvc
                 presentViewControllerAsSheet(self.progressViewController!)
                 self.progressViewController!.importController = self
@@ -57,18 +51,18 @@ class ImportViewController: NSViewController {
             
             //now launch the importing operation
             self.pendingOperations = PendingOperations()
-            let ttisImport = ttisImporter(chosenFile: dialog.URL!, progressViewController: progressViewController)
+            let ttisImport = ttisImporter(chosenFile: dialog.url!, progressViewController: progressViewController)
             ttisImport.completionBlock = {
-                if ttisImport.cancelled {
+                if ttisImport.isCancelled {
                     ttisImport.MOC.rollback()
                     return
                 }
                 //close the progress view controller and let the user know
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     //do stuff to refresh main display
-                    self.progressViewController?.dismissController(self)
+                    self.progressViewController?.dismiss(self)
                     let alert = NSAlert();
-                    alert.alertStyle = NSAlertStyle.InformationalAlertStyle
+                    alert.alertStyle = NSAlertStyle.informational
                     alert.messageText = "Import complete";
                     alert.informativeText = "Successfully completed import of new data!"
                     alert.runModal();
@@ -85,7 +79,7 @@ class ImportViewController: NSViewController {
         }
     }
     
-    @IBAction func cancelImports(sender: AnyObject) {
+    @IBAction func cancelImports(_ sender: AnyObject) {
         if (self.pendingOperations != nil) {
             self.pendingOperations.importsInProgress = []
             self.pendingOperations.importQueue.cancelAllOperations()

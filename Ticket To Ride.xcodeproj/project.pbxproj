@@ -7,17 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E202A4111D862E160093EDCD /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = E202A4101D862E160093EDCD /* Date.swift */; };
+		E2107CA51D67FE19003950BA /* TimetableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CA41D67FE19003950BA /* TimetableViewController.swift */; };
+		E2107CAC1D680877003950BA /* Train+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CA61D680877003950BA /* Train+CoreDataProperties.swift */; };
+		E2107CAD1D680877003950BA /* Train.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CA71D680877003950BA /* Train.swift */; };
+		E2107CAE1D680877003950BA /* Station+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CA81D680877003950BA /* Station+CoreDataProperties.swift */; };
+		E2107CAF1D680877003950BA /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CA91D680877003950BA /* Station.swift */; };
+		E2107CB01D680877003950BA /* RouteEntry+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */; };
+		E2107CB11D680877003950BA /* RouteEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CAB1D680877003950BA /* RouteEntry.swift */; };
 		E2498DB71D553F6600EFC7D6 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */; };
-		E2498DB91D555DF100EFC7D6 /* ImportOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */; };
 		E24F41E01D471FFB005A4D76 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24F41DF1D471FFB005A4D76 /* String.swift */; };
 		E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFD1D451E8000C97A1C /* AppDelegate.swift */; };
 		E27480001D451E8000C97A1C /* ImportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFF1D451E8000C97A1C /* ImportViewController.swift */; };
 		E27480031D451E8000C97A1C /* TicketToRide.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */; };
 		E27480051D451E8000C97A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E27480041D451E8000C97A1C /* Assets.xcassets */; };
 		E27480081D451E8000C97A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27480061D451E8000C97A1C /* Main.storyboard */; };
-		E27480131D451E8000C97A1C /* Ticket_To_RideTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27480121D451E8000C97A1C /* Ticket_To_RideTests.swift */; };
-		E274801E1D451E8000C97A1C /* Ticket_To_RideUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E274801D1D451E8000C97A1C /* Ticket_To_RideUITests.swift */; };
 		E2A2E3101D568F7F00081451 /* Duplet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A2E30F1D568F7F00081451 /* Duplet.swift */; };
+		E2F080DA1D9861E700C13368 /* ImportOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +44,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E202A4101D862E160093EDCD /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		E2107CA41D67FE19003950BA /* TimetableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimetableViewController.swift; sourceTree = "<group>"; };
+		E2107CA61D680877003950BA /* Train+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Train+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		E2107CA71D680877003950BA /* Train.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Train.swift; sourceTree = "<group>"; };
+		E2107CA81D680877003950BA /* Station+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Station+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		E2107CA91D680877003950BA /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
+		E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RouteEntry+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		E2107CAB1D680877003950BA /* RouteEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteEntry.swift; sourceTree = "<group>"; };
 		E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
 		E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportOperations.swift; sourceTree = "<group>"; };
 		E24F41DF1D471FFB005A4D76 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -49,12 +63,9 @@
 		E27480071D451E8000C97A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E27480091D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E274800E1D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E27480121D451E8000C97A1C /* Ticket_To_RideTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticket_To_RideTests.swift; sourceTree = "<group>"; };
-		E27480141D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E27480191D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E274801D1D451E8000C97A1C /* Ticket_To_RideUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticket_To_RideUITests.swift; sourceTree = "<group>"; };
-		E274801F1D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TicketToRide.entitlements; sourceTree = "<group>"; };
+		E2A2A1021DD6F9F0005E063E /* TicketToRide 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TicketToRide 2.xcdatamodel"; sourceTree = "<group>"; };
 		E2A2E30F1D568F7F00081451 /* Duplet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Duplet.swift; sourceTree = "<group>"; };
 		E2CE379F1D5FC167006C6336 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,8 +99,6 @@
 			isa = PBXGroup;
 			children = (
 				E2747FFC1D451E8000C97A1C /* Ticket To Ride */,
-				E27480111D451E8000C97A1C /* Ticket_To_RideTests */,
-				E274801C1D451E8000C97A1C /* Ticket_To_RideUITests */,
 				E2747FFB1D451E8000C97A1C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,39 +117,27 @@
 			isa = PBXGroup;
 			children = (
 				E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */,
+				E2107CA61D680877003950BA /* Train+CoreDataProperties.swift */,
+				E2107CA71D680877003950BA /* Train.swift */,
+				E2107CA81D680877003950BA /* Station+CoreDataProperties.swift */,
+				E2107CA91D680877003950BA /* Station.swift */,
+				E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */,
+				E2107CAB1D680877003950BA /* RouteEntry.swift */,
 				E2747FFD1D451E8000C97A1C /* AppDelegate.swift */,
 				E2747FFF1D451E8000C97A1C /* ImportViewController.swift */,
 				E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */,
 				E24F41DF1D471FFB005A4D76 /* String.swift */,
+				E202A4101D862E160093EDCD /* Date.swift */,
 				E2A2E30F1D568F7F00081451 /* Duplet.swift */,
 				E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */,
 				E27480041D451E8000C97A1C /* Assets.xcassets */,
 				E27480061D451E8000C97A1C /* Main.storyboard */,
+				E2107CA41D67FE19003950BA /* TimetableViewController.swift */,
 				E27480091D451E8000C97A1C /* Info.plist */,
 				E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */,
 			);
 			name = "Ticket To Ride";
 			path = "Train Map";
-			sourceTree = "<group>";
-		};
-		E27480111D451E8000C97A1C /* Ticket_To_RideTests */ = {
-			isa = PBXGroup;
-			children = (
-				E27480121D451E8000C97A1C /* Ticket_To_RideTests.swift */,
-				E27480141D451E8000C97A1C /* Info.plist */,
-			);
-			name = Ticket_To_RideTests;
-			path = "Train MapTests";
-			sourceTree = "<group>";
-		};
-		E274801C1D451E8000C97A1C /* Ticket_To_RideUITests */ = {
-			isa = PBXGroup;
-			children = (
-				E274801D1D451E8000C97A1C /* Ticket_To_RideUITests.swift */,
-				E274801F1D451E8000C97A1C /* Info.plist */,
-			);
-			name = Ticket_To_RideUITests;
-			path = "Train MapUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -206,11 +203,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Tom Curtis";
 				TargetAttributes = {
 					E2747FF91D451E8000C97A1C = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -279,11 +277,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2498DB71D553F6600EFC7D6 /* ProgressViewController.swift in Sources */,
+				E202A4111D862E160093EDCD /* Date.swift in Sources */,
+				E2F080DA1D9861E700C13368 /* ImportOperations.swift in Sources */,
 				E24F41E01D471FFB005A4D76 /* String.swift in Sources */,
-				E2498DB91D555DF100EFC7D6 /* ImportOperations.swift in Sources */,
+				E2107CAC1D680877003950BA /* Train+CoreDataProperties.swift in Sources */,
+				E2107CAE1D680877003950BA /* Station+CoreDataProperties.swift in Sources */,
+				E2107CB01D680877003950BA /* RouteEntry+CoreDataProperties.swift in Sources */,
 				E27480001D451E8000C97A1C /* ImportViewController.swift in Sources */,
 				E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */,
+				E2107CB11D680877003950BA /* RouteEntry.swift in Sources */,
 				E27480031D451E8000C97A1C /* TicketToRide.xcdatamodeld in Sources */,
+				E2107CA51D67FE19003950BA /* TimetableViewController.swift in Sources */,
+				E2107CAD1D680877003950BA /* Train.swift in Sources */,
+				E2107CAF1D680877003950BA /* Station.swift in Sources */,
 				E2A2E3101D568F7F00081451 /* Duplet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -292,7 +298,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E27480131D451E8000C97A1C /* Ticket_To_RideTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +305,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E274801E1D451E8000C97A1C /* Ticket_To_RideUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,15 +350,17 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
+				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -391,8 +397,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -400,6 +408,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -411,6 +420,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
@@ -423,6 +433,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dinotash.ticketToRide;
 				PRODUCT_NAME = "Ticket To Ride";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -435,6 +446,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dinotash.ticketToRide;
 				PRODUCT_NAME = "Ticket To Ride";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -533,6 +545,7 @@
 		E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				E2A2A1021DD6F9F0005E063E /* TicketToRide 2.xcdatamodel */,
 				E27480021D451E8000C97A1C /* TicketToRide.xcdatamodel */,
 			);
 			currentVersion = E27480021D451E8000C97A1C /* TicketToRide.xcdatamodel */;

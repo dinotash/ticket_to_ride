@@ -13,9 +13,9 @@ import Cocoa
 
 //queue of imports to be done
 class PendingOperations {
-    lazy var importsInProgress = [NSOperation]()
-    lazy var importQueue: NSOperationQueue = {
-        var queue = NSOperationQueue()
+    lazy var importsInProgress = [Operation]()
+    lazy var importQueue: OperationQueue = {
+        var queue = OperationQueue()
         queue.name = "Import queue"
         queue.maxConcurrentOperationCount = 1
         return queue
@@ -23,11 +23,11 @@ class PendingOperations {
 }
 
 //where we actually do the import
-class ttisImporter: NSOperation {
+class ttisImporter: Operation {
     
     //keep track of variables set outside the operation -> passed in on init()
     let MOC: NSManagedObjectContext //Need a separate managed object context for the separate thread
-    let chosenFile: NSURL //file we selected
+    let chosenFile: URL //file we selected
     let progressViewController: ImportProgressViewController?
     let updateLimit = 10000 //how many iterations before updating progress bar
     var dataSet: NSManagedObject?
@@ -61,28 +61,28 @@ class ttisImporter: NSOperation {
     let blankObject: NSManagedObject
     
     //initialize the variables used within the thread
-    init(chosenFile: NSURL, progressViewController: ImportProgressViewController?) {
+    init(chosenFile: URL, progressViewController: ImportProgressViewController?) {
         
         //create MOC from scratch
-        let coordinator = (NSApplication.sharedApplication().delegate as! AppDelegate).persistentStoreCoordinator
-        self.MOC = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+        let coordinator = (NSApplication.shared().delegate as! AppDelegate).persistentStoreCoordinator
+        self.MOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         self.MOC.persistentStoreCoordinator = coordinator
         self.MOC.undoManager = nil //makes it go faster, apparently
-        let blankDescription = NSEntityDescription.entityForName("Blank", inManagedObjectContext: self.MOC)
-        self.blankObject = NSManagedObject(entity: blankDescription!, insertIntoManagedObjectContext: self.MOC) //use this as a placeholder
+        let blankDescription = NSEntityDescription.entity(forEntityName: "Blank", in: self.MOC)
+        self.blankObject = NSManagedObject(entity: blankDescription!, insertInto: self.MOC) //use this as a placeholder
         
         //pass along other variables for later use
         self.progressViewController = progressViewController
         self.chosenFile = chosenFile
         super.init()
         
-        self.qualityOfService = .Utility //don't need to hold things up immediately for this
+        self.qualityOfService = .utility //don't need to hold things up immediately for this
     }
     
-    private func saveImport(after: String) {
+    fileprivate func saveImport(_ after: String) {
         // Performs the save action for the import thread, which is to send the save: message to the thread's managed object context. Any encountered errors are presented to the user.
         if !self.MOC.commitEditing() {
-            NSLog("\(NSStringFromClass(self.dynamicType)) unable to commit editing before saving")
+            NSLog("\(NSStringFromClass(type(of: self))) unable to commit editing before saving")
         }
         if self.MOC.hasChanges {
             do {
@@ -96,39 +96,45 @@ class ttisImporter: NSOperation {
     }
     
     //when loading files, check each expected file exists
-    private func fileExists(expectedFilePath: NSURL) -> Bool {
-        return (NSFileManager.defaultManager().fileExistsAtPath(expectedFilePath.relativePath!))
+    fileprivate func fileExists(_ expectedFilePath: URL) -> Bool {
+        return (FileManager.default.fileExists(atPath: expectedFilePath.relativePath))
     }
     
     //convenience method used in loadConstants() to actually create the objects
-    private func createObjectsForConstantCodes(codes: [String: String], entityName: String) {
-        let entityFetch = NSFetchRequest(entityName: entityName)
-        if (self.MOC.countForFetchRequest(entityFetch, error: nil) == 0) { //add only if not already there
-            let newEntityDescription = NSEntityDescription.entityForName(entityName, inManagedObjectContext: self.MOC)
-            for (key, value) in codes {
-                let newEntity = NSManagedObject(entity: newEntityDescription!, insertIntoManagedObjectContext: self.MOC)
-                newEntity.setValue(key, forKey: "code")
-                newEntity.setValue(value, forKey: "string")
-                let cacheKey = Duplet<String, String>(entityName, key)
-                self.objectCache[cacheKey] = newEntity
+    fileprivate func createObjectsForConstantCodes(_ codes: [String: String], entityName: String) {
+        let entityFetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        do {
+            if (try self.MOC.count(for: entityFetch) == 0) { //add only if not already there
+                let newEntityDescription = NSEntityDescription.entity(forEntityName: entityName, in: self.MOC)
+                for (key, value) in codes {
+                    let newEntity = NSManagedObject(entity: newEntityDescription!, insertInto: self.MOC)
+                    newEntity.setValue(key, forKey: "code")
+                    newEntity.setValue(value, forKey: "string")
+                    let cacheKey = Duplet<String, String>(entityName, key)
+                    self.objectCache[cacheKey] = newEntity
+                }
             }
+        }
+        catch {
+            let nserror = error as NSError
+            print(nserror)
         }
     }
     
     //function to take a file and read it in line by line, giving an array at the end
-    private func readFileLines(path: NSURL) -> [String]? {
+    fileprivate func readFileLines(_ path: URL) -> [String]? {
         do {
             //load the data, split into lines
-            let fileData = try String(contentsOfFile: path.relativePath!, encoding: NSUTF8StringEncoding)
-            let fileLines = fileData.componentsSeparatedByString("\n")
+            let fileData = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
+            let fileLines = fileData.components(separatedBy: "\n")
             return fileLines
         }
         catch {
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute: {
                 let alert = NSAlert();
-                alert.alertStyle = NSAlertStyle.WarningAlertStyle
+                alert.alertStyle = NSAlertStyle.warning
                 alert.messageText = "Unable to load data from file";
-                alert.informativeText = "Could not load data from file " + path.relativePath!
+                alert.informativeText = "Could not load data from file " + path.relativePath
                 alert.runModal();
             })
             return nil //stop without doing anything
@@ -136,7 +142,7 @@ class ttisImporter: NSOperation {
     }
     
     //convenience method to find an object if cached, and fetch it if not
-    private func fetchKeyFromCache(key: Duplet<String, String>) -> NSManagedObject? {
+    fileprivate func fetchKeyFromCache(_ key: Duplet<String, String>) -> NSManagedObject? {
         if let obj = self.objectCache[key] { //check it's in the array
             if obj == self.blankObject {
                 return nil //if we know we have nothing
@@ -151,17 +157,19 @@ class ttisImporter: NSOperation {
             let keyValue = key.two
             if let keyNames = self.entityKeys[entityType] {
                 for keyName in keyNames {
-                    let newFetch = NSFetchRequest(entityName: entityType)
+                    let newFetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityType)
                     newFetch.predicate = NSPredicate(format: keyName + " == %@", keyValue)
-                    if (self.MOC.countForFetchRequest(newFetch, error: nil) > 0) {
-                        do {
+                    do {
+                        if (try self.MOC.count(for: newFetch) > 0) {
                             //cache the result and return it
-                            let obj = try self.MOC.executeFetchRequest(newFetch)[0] as? NSManagedObject
+                            let obj = try self.MOC.fetch(newFetch)[0] as? NSManagedObject
                             self.objectCache[key] = obj
                             return obj
                         }
-                        catch {
-                        }
+                    }
+                    catch {
+                        let nserror = error as NSError
+                        print(nserror)
                     }
                 }
             }
@@ -171,13 +179,13 @@ class ttisImporter: NSOperation {
     }
     
     //fetch a code matching a given key - or nil if no response
-    private func fetchCode(entityName: String, code: String) -> NSManagedObject? {
+    fileprivate func fetchCode(_ entityName: String, code: String) -> NSManagedObject? {
         let objectKey = Duplet<String, String>(entityName, code)
         return self.fetchKeyFromCache(objectKey)
     }
     
     //convenience method to set time values on an NSManagedObject.
-    private func setTimeFromString(object: NSManagedObject, timeString: String, keyName: String) {
+    fileprivate func setTimeFromString(_ object: NSManagedObject, timeString: String, keyName: String) {
         let timePair = timeString.hhmmTime()
         if (timePair != nil) {
             object.setValue(timePair!.hour, forKey: keyName + "_hour")
@@ -186,10 +194,10 @@ class ttisImporter: NSOperation {
     }
     
     //deal with looking up station -> get tiploc, then use that to get station
-    private func fetchStationFromTiploc(tiplocCode: String) -> NSManagedObject? {
+    fileprivate func fetchStationFromTiploc(_ tiplocCode: String) -> NSManagedObject? {
         //deal with looking up station -> get tiploc, then use that to get station
         if let tiploc = fetchCode("Tiploc", code: tiplocCode) {
-            if let tiplocStation = tiploc.valueForKey("station") {
+            if let tiplocStation = tiploc.value(forKey: "station") {
                 return (tiplocStation as! NSManagedObject)
             }
         }
@@ -197,13 +205,13 @@ class ttisImporter: NSOperation {
     }
     
     //convenience method to replicate the common part of creation a routeEntry for start (LO), middle (LI) and end lines (LT)
-    private func createRouteEntryFromCodes(tiplocCode: String, scheduledDeparture: String, publicDeparture: String, scheduledArrival: String, publicArrival: String, scheduledPass: String, platform: String, line: String, activityCodes: [String]) -> NSManagedObject? {
+    fileprivate func createRouteEntryFromCodes(_ tiplocCode: String, scheduledDeparture: String, publicDeparture: String, scheduledArrival: String, publicArrival: String, scheduledPass: String, platform: String, line: String, activityCodes: [String]) -> NSManagedObject? {
         //can't do anything without a station
         if let station = fetchStationFromTiploc(tiplocCode) {
             
             //create and deal with simple objects first - flat values
-            let routeEntryDescription = NSEntityDescription.entityForName("RouteEntry", inManagedObjectContext: self.MOC)
-            let newRouteEntry = NSManagedObject(entity: routeEntryDescription!, insertIntoManagedObjectContext: self.MOC)
+            let routeEntryDescription = NSEntityDescription.entity(forEntityName: "RouteEntry", in: self.MOC)
+            let newRouteEntry = NSManagedObject(entity: routeEntryDescription!, insertInto: self.MOC)
             newRouteEntry.setValue(self.dataSet!, forKey: "dataset")
             newRouteEntry.setValue(station, forKey: "station")
             if (platform.characters.count > 0) {
@@ -231,7 +239,7 @@ class ttisImporter: NSOperation {
                 if (code.characters.count > 0) {
                     let activity = fetchCode("Activity", code: code)
                     if (activity != nil) {
-                        activities.addObject(activity!)
+                        activities.add(activity!)
                     }
                 }
             }
@@ -242,7 +250,7 @@ class ttisImporter: NSOperation {
     }
     
     //define codes based on data spec, and add to core data if not already present
-    private func loadConstants() {
+    fileprivate func loadConstants() {
         //update status
         self.progressViewController?.updateIndeterminate("Importing constants and codes into database.")
         
@@ -430,57 +438,75 @@ class ttisImporter: NSOperation {
         self.createObjectsForConstantCodes(activity_codes, entityName: "Activity")
         
         //this one is different because it has two sets of values to add
-        let categoryFetch = NSFetchRequest(entityName: "Category")
-        if (self.MOC.countForFetchRequest(categoryFetch, error: nil) == 0) {
-            for (key, value) in category_codes {
-                let categoryEntityDescription = NSEntityDescription.entityForName("Category", inManagedObjectContext: self.MOC)
-                let categoryEntity = NSManagedObject(entity: categoryEntityDescription!, insertIntoManagedObjectContext: self.MOC)
-                categoryEntity.setValue(key, forKey: "code")
-                categoryEntity.setValue(value.category, forKey: "category")
-                categoryEntity.setValue(value.subcategory, forKey: "subcategory")
-                let categoryKey = Duplet<String, String>("Category", key)
-                self.objectCache[categoryKey] = categoryEntity
+        let categoryFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Category")
+        do {
+            if (try self.MOC.count(for: categoryFetch) == 0) {
+                for (key, value) in category_codes {
+                    let categoryEntityDescription = NSEntityDescription.entity(forEntityName: "Category", in: self.MOC)
+                    let categoryEntity = NSManagedObject(entity: categoryEntityDescription!, insertInto: self.MOC)
+                    categoryEntity.setValue(key, forKey: "code")
+                    categoryEntity.setValue(value.category, forKey: "category")
+                    categoryEntity.setValue(value.subcategory, forKey: "subcategory")
+                    let categoryKey = Duplet<String, String>("Category", key)
+                    self.objectCache[categoryKey] = categoryEntity
+                }
             }
+        }
+        catch {
+            let nserror = error as NSError
+            print(nserror)
         }
         
         //this one is different because they need to be in order
-        let weekdayFetch = NSFetchRequest(entityName: "Weekday")
-        if (self.MOC.countForFetchRequest(weekdayFetch, error: nil) == 0) {
-            let weekdayDescription = NSEntityDescription.entityForName("Weekday", inManagedObjectContext: self.MOC)
-            for weekday in weekdays {
-                let weekdayEntity = NSManagedObject(entity: weekdayDescription!, insertIntoManagedObjectContext: self.MOC)
-                weekdayEntity.setValue(weekday, forKey: "string")
-                let weekdayNumber = weekdays.indexOf(weekday)!
-                weekdayEntity.setValue(weekdayNumber, forKey: "number")
-                let weekdayKey = Duplet<String, String>("Weekday", String(weekdayNumber))
-                self.objectCache[weekdayKey] = weekdayEntity
+        let weekdayFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Weekday")
+        do {
+            if (try self.MOC.count(for: weekdayFetch) == 0) {
+                let weekdayDescription = NSEntityDescription.entity(forEntityName: "Weekday", in: self.MOC)
+                for weekday in weekdays {
+                    let weekdayEntity = NSManagedObject(entity: weekdayDescription!, insertInto: self.MOC)
+                    weekdayEntity.setValue(weekday, forKey: "string")
+                    let weekdayNumber = weekdays.index(of: weekday)!
+                    weekdayEntity.setValue(weekdayNumber, forKey: "number")
+                    let weekdayKey = Duplet<String, String>("Weekday", String(weekdayNumber))
+                    self.objectCache[weekdayKey] = weekdayEntity
+                }
             }
+        }
+        catch {
+            let nserror = error as NSError
+            print(nserror)
         }
         
         //this one is different because there is no code
-        let linkModeFetch = NSFetchRequest(entityName: "LinkMode")
-        if (self.MOC.countForFetchRequest(linkModeFetch, error: nil) == 0) {
-            let linkModeDescription = NSEntityDescription.entityForName("LinkMode", inManagedObjectContext: self.MOC)
-            for (modeName) in linkModes {
-                let newModeName = modeName.lowercaseString.capitalizedString
-                let linkModeEntity = NSManagedObject(entity: linkModeDescription!, insertIntoManagedObjectContext: self.MOC)
-                linkModeEntity.setValue(newModeName, forKey: "string")
-                let linkModeKey = Duplet<String, String>("LinkMode", newModeName)
-                self.objectCache[linkModeKey] = linkModeEntity
+        let linkModeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "LinkMode")
+        do {
+            if (try self.MOC.count(for: linkModeFetch) == 0) {
+                let linkModeDescription = NSEntityDescription.entity(forEntityName: "LinkMode", in: self.MOC)
+                for (modeName) in linkModes {
+                    let newModeName = modeName.lowercased().capitalized
+                    let linkModeEntity = NSManagedObject(entity: linkModeDescription!, insertInto: self.MOC)
+                    linkModeEntity.setValue(newModeName, forKey: "string")
+                    let linkModeKey = Duplet<String, String>("LinkMode", newModeName)
+                    self.objectCache[linkModeKey] = linkModeEntity
+                }
             }
+        }
+        catch {
+            let nserror = error as NSError
+            print(nserror)
         }
     }
     
     //encapsulate process as need to run it for both MCA and ZTR files
-    private func processTrainArray(array: [String], arrayStart: Int, filename: String) {
+    fileprivate func processTrainArray(_ array: [String], arrayStart: Int, filename: String) {
         //now load the MCA data with info on trains and routes - we already found its path
-        let trainDescription = NSEntityDescription.entityForName("Train", inManagedObjectContext: self.MOC)
+        let trainDescription = NSEntityDescription.entity(forEntityName: "Train", in: self.MOC)
         
         //the in the MCA file are not isolated, so need to store info together in one place, and reuse as needed. Must be outside the loop
         var routeEntries = NSMutableOrderedSet()
-        var trainDays = [Bool](count: 7, repeatedValue: false)
-        var startDate = NSDate()
-        var endDate = NSDate()
+        var trainDays = [Bool](repeating: false, count: 7)
+        var startDate = Date()
+        var endDate = Date()
         var id = String()
         var uid = String()
         var categoryCode = String()
@@ -495,8 +521,8 @@ class ttisImporter: NSOperation {
         var atocCode = String()
         
         //helps with formatting
-        let progressNumberFormatter = NSNumberFormatter()
-        progressNumberFormatter.numberStyle = .DecimalStyle
+        let progressNumberFormatter = NumberFormatter()
+        progressNumberFormatter.numberStyle = .decimal
         progressNumberFormatter.hasThousandSeparators = true
         
         //loop through the data line by line
@@ -516,12 +542,12 @@ class ttisImporter: NSOperation {
             
             lineCount += 1
             trainDataCount += 1
-            if self.cancelled {
+            if self.isCancelled {
                 self.MOC.rollback()
                 return
             }
             
-            let progressString = "Processing " + filename.uppercaseString + " train data - line " + progressNumberFormatter.stringFromNumber(arrayStart + lineCount)! + " of " + progressNumberFormatter.stringFromNumber(array.count)! + "."
+            let progressString = "Processing " + filename.uppercased() + " train data - line " + progressNumberFormatter.string(from: NSNumber(value: arrayStart + lineCount))! + " of " + progressNumberFormatter.string(from: NSNumber(value: array.count))! + "."
             let progressValue = Double(self.importCount) / Double(self.totalCount)
             self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (self.importCount % self.updateLimit == 0))
             
@@ -538,7 +564,7 @@ class ttisImporter: NSOperation {
                     
                     if ((trainCount > 1) && (arrayStart < array.count)) { //check it's not the first time we've found a BS line
                         //create the object, and cache it
-                        let newTrain = NSManagedObject(entity: trainDescription!, insertIntoManagedObjectContext: self.MOC)
+                        let newTrain = NSManagedObject(entity: trainDescription!, insertInto: self.MOC)
                         
                         //set constant values that don't depend on looking up other types of thing
                         newTrain.setValue(self.dataSet!, forKey: "dataset")
@@ -560,7 +586,7 @@ class ttisImporter: NSOperation {
                         
                         //set each of the routeEntries to this train
                         for routeEntry in routeEntries {
-                            routeEntry.setValue(newTrain, forKey: "train") //set the one-side of the many-to-one relationship
+                            (routeEntry as AnyObject).setValue(newTrain, forKey: "train") //set the one-side of the many-to-one relationship
                         }
                         
                         //look up all of the catering codes and add a set to the train
@@ -568,7 +594,7 @@ class ttisImporter: NSOperation {
                         for code in cateringCodes {
                             let cateringKey = Duplet<String, String>("Catering", code)
                             if let cateringResult = fetchKeyFromCache(cateringKey) {
-                                caterings.addObject(cateringResult)
+                                caterings.add(cateringResult)
                             }
                         }
                         if (caterings.count > 0) {
@@ -580,7 +606,7 @@ class ttisImporter: NSOperation {
                         for i in 0 ..< 7 {
                             if (trainDays[i] == true) {
                                 if let thisDay = self.fetchCode("Weekday", code: String(i)) {
-                                    runsOn.addObject(thisDay)
+                                    runsOn.add(thisDay)
                                 }
                             }
                         }
@@ -607,14 +633,14 @@ class ttisImporter: NSOperation {
                     
                     //load in details of when the train runs
                     for i in 0...6 {
-                        trainDays[i] = mcaLine[mcaLine.startIndex.advancedBy(21 + i)] == "1"
+                        trainDays[i] = mcaLine[mcaLine.characters.index(mcaLine.startIndex, offsetBy: 21 + i)] == "1"
                     }
                     let startString = mcaLine.substring(9, end: 14)
                     startDate = startString.yymmddDate()!
                     let endString = mcaLine.substring(15, end: 20)
                     endDate = endString.yymmddDate()!
                     
-                    let bankHolidaysCharacter = mcaLine[mcaLine.startIndex.advancedBy(28)]
+                    let bankHolidaysCharacter = mcaLine[mcaLine.characters.index(mcaLine.startIndex, offsetBy: 28)]
                     switch (bankHolidaysCharacter) {
                     case "X":
                         englishBankHolidays = true //Runs on English bank holidays
@@ -641,9 +667,9 @@ class ttisImporter: NSOperation {
                     else {
                         speed = 0
                     }
-                    classCode = String(mcaLine[mcaLine.startIndex.advancedBy(66)])
-                    sleeperCode = String(mcaLine[mcaLine.startIndex.advancedBy(67)])
-                    reservationsCode = String(mcaLine[mcaLine.startIndex.advancedBy(68)])
+                    classCode = String(mcaLine[mcaLine.characters.index(mcaLine.startIndex, offsetBy: 66)])
+                    sleeperCode = String(mcaLine[mcaLine.characters.index(mcaLine.startIndex, offsetBy: 67)])
+                    reservationsCode = String(mcaLine[mcaLine.characters.index(mcaLine.startIndex, offsetBy: 68)])
                     
                     //catering can have multiple codes so get them all as separate strings
                     let cateringCharacters = mcaLine.substring(70, end: 73)
@@ -672,13 +698,13 @@ class ttisImporter: NSOperation {
                     for i in 0...(activityCodesString.characters.count - 1) where i % 2 == 0 {
                         let codePair = activityCodesString.substring(i, end: i + 1, trim: true)
                         if ((codePair != "  ") && (codePair != " ") && (codePair != "")) { //some activity codes are single letters so pair could have a space which will be trimmed
-                            activityCodes.append(codePair.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()))
+                            activityCodes.append(codePair.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
                         }
                     }
                     
                     //now formulate a routeEntry with that info if we found any
                     if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: scheduledDeparture, publicDeparture: publicDeparture, scheduledArrival: "", publicArrival: "", scheduledPass: "", platform: platform, line: line, activityCodes: activityCodes) {
-                        routeEntries.addObject(newRouteEntry)
+                        routeEntries.add(newRouteEntry)
                     }
                     break
                     
@@ -702,7 +728,7 @@ class ttisImporter: NSOperation {
                     }
                     
                     if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: scheduledDeparture, publicDeparture: publicDeparture, scheduledArrival: scheduledArrival, publicArrival: publicArrival, scheduledPass: scheduledPass, platform: platform, line: line, activityCodes: activityCodes) {
-                        routeEntries.addObject(newRouteEntry)
+                        routeEntries.add(newRouteEntry)
                     }
                     break
                     
@@ -726,7 +752,7 @@ class ttisImporter: NSOperation {
                     }
                     
                     if let newRouteEntry = self.createRouteEntryFromCodes(tiplocCode, scheduledDeparture: "", publicDeparture: "", scheduledArrival: scheduledArrival, publicArrival: publicArrival, scheduledPass: "", platform: platform, line: "", activityCodes: activityCodes) {
-                        routeEntries.addObject(newRouteEntry)
+                        routeEntries.add(newRouteEntry)
                     }
                     
                     break
@@ -743,7 +769,7 @@ class ttisImporter: NSOperation {
         //also need to run through and make the last train after the last time through the loop
         if (uid.characters.count > 0) { //check it's not the initializer
             //create the object
-            let newTrain = NSManagedObject(entity: trainDescription!, insertIntoManagedObjectContext: self.MOC)
+            let newTrain = NSManagedObject(entity: trainDescription!, insertInto: self.MOC)
             
             //set constant values that don't depend on looking up other types of thing
             newTrain.setValue(self.dataSet!, forKey: "dataset")
@@ -769,7 +795,7 @@ class ttisImporter: NSOperation {
             for code in cateringCodes {
                 let cateringCode = Duplet<String, String>("Catering", code)
                 if let cateringResult = self.fetchKeyFromCache(cateringCode) {
-                    caterings.addObject(cateringResult)
+                    caterings.add(cateringResult)
                 }
             }
             if (caterings.count > 0) {
@@ -781,7 +807,7 @@ class ttisImporter: NSOperation {
             for i in 0 ..< 7 {
                 if (trainDays[i] == true) {
                     if let thisDay = self.fetchCode("Weekday", code: String(i)) {
-                        runsOn.addObject(thisDay)
+                        runsOn.add(thisDay)
                     }
                 }
             }
@@ -804,16 +830,16 @@ class ttisImporter: NSOperation {
     }
 
     //rebuild cache if resuming
-    private func rebuildObjectCache() {
+    fileprivate func rebuildObjectCache() {
         let totalProgress = self.msnProgress + self.mcaProgress + self.ztrProgress + self.alfProgress
         if (totalProgress == 0) {
             return
         }
         //go through the things we want in the cache
         for (entityType, keys) in self.entityKeys {
-            let entityFetch = NSFetchRequest(entityName: entityType)
+            let entityFetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityType)
             do {
-                let entityResults = try self.MOC.executeFetchRequest(entityFetch)
+                let entityResults = try self.MOC.fetch(entityFetch)
                 for entityResult in entityResults {
                     for key in keys { //add it in by each key available
                         let entityKey = Duplet<String, String>(entityType, key)
@@ -827,7 +853,7 @@ class ttisImporter: NSOperation {
     
     override func main() {
         //check for cancellation at the start - will do so again during the life
-        if self.cancelled {
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
@@ -835,19 +861,19 @@ class ttisImporter: NSOperation {
         self.progressViewController?.updateIndeterminate("Checking for necessary files in directory.")
         
         //find the data directory and the file we chose
-        let datasetName = self.chosenFile.URLByDeletingPathExtension!.lastPathComponent!
-        let directoryPath = self.chosenFile.URLByDeletingLastPathComponent!
+        let datasetName = self.chosenFile.deletingPathExtension().lastPathComponent
+        let directoryPath = self.chosenFile.deletingLastPathComponent()
         
         //check directory contains all the files we expect - .alf, .mca, .msn, .ztr
         let dataFileTypes = ["msn", "mca", "alf", "ztr"]
         for dataFileType in dataFileTypes {
-            let expectedFilePath = directoryPath.URLByAppendingPathComponent(datasetName + "." + dataFileType)
+            let expectedFilePath = directoryPath.appendingPathComponent(datasetName + "." + dataFileType)
             
             //non-critical error - just stop loading
             if (!self.fileExists(expectedFilePath)) {
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     let alert = NSAlert();
-                    alert.alertStyle = NSAlertStyle.WarningAlertStyle
+                    alert.alertStyle = NSAlertStyle.warning
                     alert.messageText = "Unable to load data from directory";
                     alert.informativeText = "Could not find expected file - " + expectedFilePath.absoluteString
                     alert.runModal();
@@ -857,32 +883,38 @@ class ttisImporter: NSOperation {
         }
         
         //first, let's check if the data already exists, if so don't load it
-        let samedataSetFetch = NSFetchRequest(entityName: "Dataset")
+        let samedataSetFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Dataset")
         samedataSetFetch.predicate = NSPredicate(format: "name == %@", datasetName)
-        if (self.MOC.countForFetchRequest(samedataSetFetch, error: nil) > 0) {
-            
-            //find out where we got to last time
-            do {
-                self.dataSet = try self.MOC.executeFetchRequest(samedataSetFetch)[0] as? NSManagedObject
-                self.msnProgress = self.dataSet!.valueForKey("msnProgress") as! Int
-                self.mcaProgress = self.dataSet!.valueForKey("mcaProgress") as! Int
-                self.ztrProgress = self.dataSet!.valueForKey("ztrProgress") as! Int
-                self.alfProgress = self.dataSet!.valueForKey("alfProgress") as! Int
+        do {
+            if (try self.MOC.count(for: samedataSetFetch) > 0) {
+                
+                //find out where we got to last time
+                do {
+                    self.dataSet = try self.MOC.fetch(samedataSetFetch)[0] as? NSManagedObject
+                    self.msnProgress = self.dataSet!.value(forKey: "msnProgress") as! Int
+                    self.mcaProgress = self.dataSet!.value(forKey: "mcaProgress") as! Int
+                    self.ztrProgress = self.dataSet!.value(forKey: "ztrProgress") as! Int
+                    self.alfProgress = self.dataSet!.value(forKey: "alfProgress") as! Int
+                }
+                catch {
+                }
+                
+                //rebuild the object cache to save time
+                self.rebuildObjectCache()
             }
-            catch {
-            }
-            
-            //rebuild the object cache to save time
-            self.rebuildObjectCache()
+        }
+        catch {
+            let nserror = error as NSError
+            print(nserror)
         }
         
         if (self.dataSet == nil) { //create a new dataset if we don't already have one
             
             //Start by defining the dataset
-            let newDataSetEntity = NSEntityDescription.entityForName("Dataset", inManagedObjectContext: self.MOC)
-            let newDataSet = NSManagedObject(entity: newDataSetEntity!, insertIntoManagedObjectContext: self.MOC)
+            let newDataSetEntity = NSEntityDescription.entity(forEntityName: "Dataset", in: self.MOC)
+            let newDataSet = NSManagedObject(entity: newDataSetEntity!, insertInto: self.MOC)
             newDataSet.setValue(datasetName, forKey: "name")
-            newDataSet.setValue(NSDate(), forKey: "date_loaded")
+            newDataSet.setValue(Date(), forKey: "date_loaded")
             self.dataSet = newDataSet
         }
         
@@ -890,44 +922,44 @@ class ttisImporter: NSOperation {
         self.loadConstants() //functions already check whether we have all the constants/definitions we need first
         
         //get the date modified from the MCA file loaded
-        let mcaFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".mca")
+        let mcaFilePath = directoryPath.appendingPathComponent(datasetName + ".mca")
         do {
-            let mcaAttributes = try NSFileManager.defaultManager().attributesOfItemAtPath(mcaFilePath.absoluteString)
-            self.dataSet!.setValue(mcaAttributes[NSFileModificationDate], forKey: "date_modified")
+            let mcaAttributes = try FileManager.default.attributesOfItem(atPath: mcaFilePath.absoluteString)
+            self.dataSet!.setValue(mcaAttributes[FileAttributeKey.modificationDate], forKey: "date_modified")
         }
         catch { //if in doubt, set as extreme date and carry on
-            self.dataSet!.setValue(NSDate.distantPast(), forKey: "date_modified")
+            self.dataSet!.setValue(Date.distantPast, forKey: "date_modified")
         }
         
         //load in all the data - need it up front to have a sense of progress for progress bar
-        let msnFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".msn")
-        let ztrFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".ztr")
-        let alfFilePath = directoryPath.URLByAppendingPathComponent(datasetName + ".alf")
-        if self.cancelled {
+        let msnFilePath = directoryPath.appendingPathComponent(datasetName + ".msn")
+        let ztrFilePath = directoryPath.appendingPathComponent(datasetName + ".ztr")
+        let alfFilePath = directoryPath.appendingPathComponent(datasetName + ".alf")
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
-        self.progressViewController?.updateIndeterminate("Loading " + msnFilePath.lastPathComponent!.uppercaseString)
+        self.progressViewController?.updateIndeterminate("Loading " + msnFilePath.lastPathComponent.uppercased())
         var msnData = self.readFileLines(msnFilePath)
-        if self.cancelled {
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
-        self.progressViewController?.updateIndeterminate("Loading " + mcaFilePath.lastPathComponent!.uppercaseString)
+        self.progressViewController?.updateIndeterminate("Loading " + mcaFilePath.lastPathComponent.uppercased())
         var mcaData = self.readFileLines(mcaFilePath)
-        if self.cancelled {
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
-        self.progressViewController?.updateIndeterminate("Loading " + ztrFilePath.lastPathComponent!.uppercaseString)
+        self.progressViewController?.updateIndeterminate("Loading " + ztrFilePath.lastPathComponent.uppercased())
         var ztrData = self.readFileLines(ztrFilePath)
-        if self.cancelled {
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
-        self.progressViewController?.updateIndeterminate("Loading " + alfFilePath.lastPathComponent!.uppercaseString)
+        self.progressViewController?.updateIndeterminate("Loading " + alfFilePath.lastPathComponent.uppercased())
         var alfData = self.readFileLines(alfFilePath)
-        if self.cancelled {
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
@@ -944,8 +976,8 @@ class ttisImporter: NSOperation {
         }
         
         //variables to keep track of progress
-        let progressNumberFormatter = NSNumberFormatter()
-        progressNumberFormatter.numberStyle = .DecimalStyle
+        let progressNumberFormatter = NumberFormatter()
+        progressNumberFormatter.numberStyle = .decimal
         progressNumberFormatter.hasThousandSeparators = true
         self.importCount = self.msnProgress //skip ahead if we can
         self.totalCount = msnData!.count + mcaData!.count + ztrData!.count + alfData!.count
@@ -953,15 +985,16 @@ class ttisImporter: NSOperation {
         let saveMSN = self.msnProgress < msnData!.count //will only need to save if we started before the end
         
         //now load the underlying data. Start with stations - in the .MSN file
-        for msnLine in msnData![self.msnProgress..<msnData!.endIndex] {
+        for msnLine in msnData![msnData!.indices.suffix(from: self.msnProgress)] {
             autoreleasepool {
             self.msnProgress += 1
             self.importCount += 1
-            if self.cancelled {
+            if self.isCancelled {
                 self.MOC.rollback()
                 return
             }
-            let progressString = "Loading station data - line " + progressNumberFormatter.stringFromNumber(self.msnProgress)! + " of " + progressNumberFormatter.stringFromNumber(msnData!.count)! + "."
+                
+            let progressString = "Loading station data - line " + progressNumberFormatter.string(from: NSNumber(value: self.msnProgress))! + " of " + progressNumberFormatter.string(from: NSNumber(value: msnData!.count))! + "."
             let progressValue = Double(self.importCount) / Double(self.totalCount)
             self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (self.importCount % self.updateLimit == 0))
             
@@ -970,13 +1003,13 @@ class ttisImporter: NSOperation {
                 let firstChar = msnLine[msnLine.startIndex]
                 switch(firstChar) {
                 case "A": //actual station
-                    if (msnLine[msnLine.startIndex.advancedBy(5)] != " ") { //this is the timestamp line
+                    if (msnLine[msnLine.characters.index(msnLine.startIndex, offsetBy: 5)] != " ") { //this is the timestamp line
                         //make new station - predefined data format, things at certain positions on each row
                         var stationName = msnLine.substring(3, end: 34)
                         stationName = stationName.formatName()//capitalize and then fix errors in name processing
                         
                         //other properties
-                        let cate = Int(String((msnLine.characters[msnLine.startIndex.advancedBy(35)]))) //0: Not an interchange, 1: Small interchange, 2: medium interchange, 3: large interchange, 9: subsidiary TIPLOC at station with more than one
+                        let cate = Int(String((msnLine.characters[msnLine.characters.index(msnLine.startIndex, offsetBy: 35)]))) //0: Not an interchange, 1: Small interchange, 2: medium interchange, 3: large interchange, 9: subsidiary TIPLOC at station with more than one
                         let tiploc = msnLine.substring(36, end: 42) //timing point location code
                         let subsidiaryCRS = msnLine.substring(43, end: 45) //3-alpha code
                         let mainCRS = msnLine.substring(49, end: 51) //3-alpha code
@@ -985,8 +1018,8 @@ class ttisImporter: NSOperation {
                         let changeTime = Int(msnLine.substring(63, end: 65))!
                         
                         //load them into an object
-                        let newStationEntity = NSEntityDescription.entityForName("Station", inManagedObjectContext: self.MOC)
-                        let newStation = NSManagedObject(entity: newStationEntity!, insertIntoManagedObjectContext: self.MOC)
+                        let newStationEntity = NSEntityDescription.entity(forEntityName: "Station", in: self.MOC)
+                        let newStation = NSManagedObject(entity: newStationEntity!, insertInto: self.MOC)
                         newStation.setValue(self.dataSet!, forKey: "dataset")
                         newStation.setValue(stationName, forKey: "name")
                         self.objectCache[Duplet<String, String>("Station", stationName)] = newStation //cache by name
@@ -1003,8 +1036,8 @@ class ttisImporter: NSOperation {
                         
                         
                         //create a tiploc entry
-                        let tiplocEntityDescription = NSEntityDescription.entityForName("Tiploc", inManagedObjectContext: self.MOC)
-                        let tiplocEntity = NSManagedObject(entity: tiplocEntityDescription!, insertIntoManagedObjectContext: self.MOC)
+                        let tiplocEntityDescription = NSEntityDescription.entity(forEntityName: "Tiploc", in: self.MOC)
+                        let tiplocEntity = NSManagedObject(entity: tiplocEntityDescription!, insertInto: self.MOC)
                         tiplocEntity.setValue(self.dataSet!, forKey: "dataset")
                         tiplocEntity.setValue(tiploc, forKey: "code")
                         tiplocEntity.setValue(newStation, forKey: "station")
@@ -1029,8 +1062,8 @@ class ttisImporter: NSOperation {
                             aliasName = aliasName.formatName()
                             
                             //create an object and link the alias to the station
-                            let newAliasEntity = NSEntityDescription.entityForName("Alias", inManagedObjectContext: self.MOC)
-                            let newAlias = NSManagedObject(entity: newAliasEntity!, insertIntoManagedObjectContext: self.MOC)
+                            let newAliasEntity = NSEntityDescription.entity(forEntityName: "Alias", in: self.MOC)
+                            let newAlias = NSManagedObject(entity: newAliasEntity!, insertInto: self.MOC)
                             newAlias.setValue(aliasName, forKey: "name")
                             newAlias.setValue(self.dataSet!, forKey: "dataset")
                             newAlias.setValue(thisStation, forKey: "station")
@@ -1051,21 +1084,21 @@ class ttisImporter: NSOperation {
                     
                     //extract the station three-letter codes
                     let groupCodesString = msnLine.substring(36, end: 76)
-                    let groupCodes = groupCodesString.componentsSeparatedByString(" ")
+                    let groupCodes = groupCodesString.components(separatedBy: " ")
                     
                     //compile a list of actual stations
                     let groupStations = NSMutableSet()
                     for code in groupCodes {
                         let crsKey = Duplet<String, String>("Station", code)
                         if let thisStation = fetchKeyFromCache(crsKey) {
-                            groupStations.addObject(thisStation)
+                            groupStations.add(thisStation)
                         }
                     }
                     
                     //if we found something then make a group object
                     if (groupStations.count > 0) {
-                        let newGroupEntity = NSEntityDescription.entityForName("Group", inManagedObjectContext: self.MOC)
-                        let newGroup = NSManagedObject(entity: newGroupEntity!, insertIntoManagedObjectContext: self.MOC)
+                        let newGroupEntity = NSEntityDescription.entity(forEntityName: "Group", in: self.MOC)
+                        let newGroup = NSManagedObject(entity: newGroupEntity!, insertInto: self.MOC)
                         newGroup.setValue(groupName, forKey: "name")
                         newGroup.setValue(self.dataSet!, forKey: "dataset")
                         newGroup.setValue(groupStations, forKey: "stations")
@@ -1087,13 +1120,13 @@ class ttisImporter: NSOperation {
             self.saveImport("stations")
         }
         
-        if self.cancelled {
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
         processTrainArray(mcaData!, arrayStart: self.mcaProgress, filename: "mca")
         
-        if self.cancelled {
+        if self.isCancelled {
             self.MOC.rollback()
             return
         }
@@ -1105,22 +1138,22 @@ class ttisImporter: NSOperation {
         ztrData = []
         
         //now import the ALF fixed links data
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM/yyyy"
-        let linkDescription = NSEntityDescription.entityForName("Link", inManagedObjectContext: self.MOC)
+        let linkDescription = NSEntityDescription.entity(forEntityName: "Link", in: self.MOC)
         self.importCount += self.alfProgress //skip ahead if we can
         
         let saveALF = self.alfProgress < alfData!.count //will only need to save if we started before the end
         
-        for alfLine in alfData![self.alfProgress..<alfData!.endIndex] {
+        for alfLine in alfData![alfData!.indices.suffix(from: self.alfProgress)] {
             autoreleasepool {
             self.alfProgress += 1
             self.importCount += 1
-            if self.cancelled {
+            if self.isCancelled {
                 self.MOC.rollback()
                 return
             }
-            let progressString = "Loading fixed link data - line " + progressNumberFormatter.stringFromNumber(self.alfProgress)! + " of " + progressNumberFormatter.stringFromNumber(alfData!.count)! + "."
+                let progressString = "Loading fixed link data - line " + progressNumberFormatter.string(from: NSNumber(value: self.alfProgress))! + " of " + progressNumberFormatter.string(from: NSNumber(value: alfData!.count))! + "."
             let progressValue = Double(self.importCount) / Double(self.totalCount)
             self.progressViewController?.updateDeterminate(progressString, doubleValue: progressValue, updateBar: (self.importCount % self.updateLimit == 0))
             
@@ -1136,18 +1169,18 @@ class ttisImporter: NSOperation {
                     var end_minute: Int?
                     var time: Int?
                     var priority: Int?
-                    var start_date: NSDate?
-                    var end_date: NSDate?
+                    var start_date: Date?
+                    var end_date: Date?
                     var days: NSMutableSet?
                     var mode: AnyObject?
                     
                     //now extract the rest
-                    let alfParts = alfLine.componentsSeparatedByString(",") //comma separated values
+                    let alfParts = alfLine.components(separatedBy: ",") //comma separated values
                     for alfPart in alfParts {
-                        let alfPartParts = alfPart.componentsSeparatedByString("=") //key before the =, value after
+                        let alfPartParts = alfPart.components(separatedBy: "=") //key before the =, value after
                         switch(alfPartParts[0]) { //treat differently depending on value
                             case "M": //mode
-                                let modeName = alfPartParts[1].lowercaseString.capitalizedString
+                                let modeName = alfPartParts[1].lowercased().capitalized
                                 mode = self.fetchCode("LinkMode", code: modeName)
                                 break
                             
@@ -1186,11 +1219,11 @@ class ttisImporter: NSOperation {
                                 break
                             
                             case "F": //optional start date in dd/mm/yyyy format
-                                start_date = dateFormatter.dateFromString(alfPartParts[1])
+                                start_date = dateFormatter.date(from: alfPartParts[1])
                                 break
                             
                             case "U": //optional end date in dd/mm/yyyy format
-                                end_date = dateFormatter.dateFromString(alfPartParts[1])
+                                end_date = dateFormatter.date(from: alfPartParts[1])
                                 break
                             
                             case "R": //0 or 1 for each day of the week, starting with Monday
@@ -1199,7 +1232,7 @@ class ttisImporter: NSOperation {
                                 for dayCharacter in alfPartParts[1].characters {
                                     if (dayCharacter == "1") { //only need the ones where it runs on
                                         if let thisDay = self.fetchCode("Weekday", code: String(dayCount)) {
-                                            days!.addObject(thisDay)
+                                            days!.add(thisDay)
                                         }
                                     }
                                     dayCount += 1
@@ -1213,14 +1246,14 @@ class ttisImporter: NSOperation {
                     
                     //cope with optional dates
                     if (start_date == nil) {
-                        start_date = NSDate.distantPast()
+                        start_date = Date.distantPast
                     }
                     if (end_date == nil) {
-                        end_date = NSDate.distantFuture()
+                        end_date = Date.distantFuture
                     }
                     
                     //check we have something for each field and skip if not
-                    let non_optional_fields = [origin, destination, start_hour, start_minute, end_hour, end_minute, time, priority, start_date, end_date, days, mode]
+                    let non_optional_fields = [origin, destination, start_hour, start_minute, end_hour, end_minute, time, priority, start_date, end_date, days, mode] as [Any]
                     var all_fields_complete = true
                     for field in non_optional_fields {
                         if field == nil {
@@ -1231,7 +1264,7 @@ class ttisImporter: NSOperation {
                     
                     if (all_fields_complete) {
                         //if have everything, then make the object
-                        let linkEntity = NSManagedObject(entity: linkDescription!, insertIntoManagedObjectContext: self.MOC)
+                        let linkEntity = NSManagedObject(entity: linkDescription!, insertInto: self.MOC)
                         linkEntity.setValue(origin, forKey: "origin")
                         linkEntity.setValue(destination, forKey: "destination")
                         linkEntity.setValue(mode, forKey: "mode")

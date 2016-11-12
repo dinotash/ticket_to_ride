@@ -9,24 +9,45 @@
 import Foundation
 import Cocoa
 
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l >= r
+  default:
+    return !(lhs < rhs)
+  }
+}
+
+
 extension String {
     
     //method to take a substring in an easy manner
-    func substring(start: Int, end: Int, trim: Bool=true, trimDashes: Bool=false) -> String {
-        let substringStart = self.startIndex.advancedBy(start)
+    func substring(_ start: Int, end: Int, trim: Bool=true, trimDashes: Bool=false) -> String {
+        let substringStart = self.characters.index(self.startIndex, offsetBy: start)
         
         //if end is too long, wrap to end of string, otherwise use real value
-        let endLimit = self.endIndex.advancedBy(-1, limit: self.startIndex)
-        let substringEnd = self.startIndex.advancedBy(end, limit: endLimit)
+        let endLimit = self.characters.index(self.endIndex, offsetBy: -1, limitedBy: self.startIndex)
+        let substringEnd = self.characters.index(self.startIndex, offsetBy: end, limitedBy: endLimit!)
         
-        var newSubstring = self[substringStart...substringEnd]
+        var newSubstring = self[substringStart...substringEnd!]
         
         if trimDashes { // to cope with ZTR file
-            newSubstring = newSubstring.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: "-"))
+            newSubstring = newSubstring.trimmingCharacters(in: CharacterSet(charactersIn: "-"))
         }
         
         if (trim) {
-            return newSubstring.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            return newSubstring.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         }
         else {
             return newSubstring
@@ -34,25 +55,25 @@ extension String {
     }
     
     func formatName() -> String {
-        var newName = self.capitalizedStringWithLocale(NSLocale(localeIdentifier: "en_GB"))
-        newName = newName.stringByReplacingOccurrencesOfString("<Cie>", withString: "<CIE>")
-        newName = newName.stringByReplacingOccurrencesOfString("<Lul>", withString: "<LUL>")
-        newName = newName.stringByReplacingOccurrencesOfString("<Nir>", withString: "<NIR>")
-        newName = newName.stringByReplacingOccurrencesOfString("<Ns>", withString: "<NS>")
-        newName = newName.stringByReplacingOccurrencesOfString("<Evr>", withString: "<EVR>")
+        var newName = self.capitalized(with: Locale(identifier: "en_GB"))
+        newName = newName.replacingOccurrences(of: "<Cie>", with: "<CIE>")
+        newName = newName.replacingOccurrences(of: "<Lul>", with: "<LUL>")
+        newName = newName.replacingOccurrences(of: "<Nir>", with: "<NIR>")
+        newName = newName.replacingOccurrences(of: "<Ns>", with: "<NS>")
+        newName = newName.replacingOccurrences(of: "<Evr>", with: "<EVR>")
         return newName
     }
     
     //convert from yymmdd format to a date
-    func yymmddDate() -> NSDate? {
+    func yymmddDate() -> Date? {
         if (self.characters.count == 6) { //
             if (Int(self) != nil) { //check it's numeric
-                let dateFormatter = NSDateFormatter()
+                let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyyMMdd"
                 
                 //deal with case for open ended services, treat as running until year 3000
                 if (self == "99999") {
-                    return NSDate.distantFuture()
+                    return Date.distantFuture
                 }
                     //otherwise, check the century and process as expected
                 else {
@@ -61,12 +82,12 @@ extension String {
                     if (shortYearNum >= 60) { //60-99 assumed to be 1960-1999
                         let century = "19"
                         let fullDate = century + self
-                        return dateFormatter.dateFromString(fullDate)
+                        return dateFormatter.date(from: fullDate)
                     }
                     else {
                         let century = "20" //00-59 assumed to be 2000-2059
                         let fullDate = century + self
-                        return dateFormatter.dateFromString(fullDate)
+                        return dateFormatter.date(from: fullDate)
                     }
                 }
             }
@@ -85,5 +106,22 @@ extension String {
             }
         }
         return nil
+    }
+    
+    //convert two numbers to a string after adding leading zeros
+    static func timeHHMM(_ hour: NSNumber?, minute: NSNumber?) -> String {
+        if (hour == nil) || (minute == nil) {
+            return ""
+        }
+        
+        let hour_string = String(format: "%02d", hour!.intValue)
+        let minute_string = String(format: "%02d", minute!.intValue)
+        let combined_string = hour_string + minute_string
+        if (combined_string == "0000") {
+            return "" //blank string
+        }
+        else {
+            return combined_string
+        }
     }
 }
