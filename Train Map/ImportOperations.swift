@@ -1253,7 +1253,7 @@ class ttisImporter: Operation {
                     }
                     
                     //check we have something for each field and skip if not
-                    let non_optional_fields = [origin, destination, start_hour, start_minute, end_hour, end_minute, time, priority, start_date, end_date, days, mode] as [Any]
+                    let non_optional_fields = [origin, destination, start_hour, start_minute, end_hour, end_minute, time, priority, start_date, end_date, days, mode] as [Any?]
                     var all_fields_complete = true
                     for field in non_optional_fields {
                         if field == nil {

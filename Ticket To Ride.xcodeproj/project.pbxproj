@@ -15,6 +15,8 @@
 		E2107CAF1D680877003950BA /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CA91D680877003950BA /* Station.swift */; };
 		E2107CB01D680877003950BA /* RouteEntry+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */; };
 		E2107CB11D680877003950BA /* RouteEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CAB1D680877003950BA /* RouteEntry.swift */; };
+		E22BAC8D1DD7B44500753065 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E22BAC8C1DD7B44500753065 /* MapKit.framework */; };
+		E22BAC8F1DD7B79400753065 /* TrainMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22BAC8E1DD7B79400753065 /* TrainMapView.swift */; };
 		E2498DB71D553F6600EFC7D6 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */; };
 		E24F41E01D471FFB005A4D76 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24F41DF1D471FFB005A4D76 /* String.swift */; };
 		E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFD1D451E8000C97A1C /* AppDelegate.swift */; };
@@ -52,6 +54,9 @@
 		E2107CA91D680877003950BA /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RouteEntry+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E2107CAB1D680877003950BA /* RouteEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteEntry.swift; sourceTree = "<group>"; };
+		E22BAC8B1DD7B3AF00753065 /* Ticket To Ride.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Ticket To Ride.entitlements"; sourceTree = SOURCE_ROOT; };
+		E22BAC8C1DD7B44500753065 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		E22BAC8E1DD7B79400753065 /* TrainMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrainMapView.swift; sourceTree = "<group>"; };
 		E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
 		E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportOperations.swift; sourceTree = "<group>"; };
 		E24F41DF1D471FFB005A4D76 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -64,7 +69,6 @@
 		E27480091D451E8000C97A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E274800E1D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E27480191D451E8000C97A1C /* Ticket To Ride.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ticket To Ride.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TicketToRide.entitlements; sourceTree = "<group>"; };
 		E2A2A1021DD6F9F0005E063E /* TicketToRide 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TicketToRide 2.xcdatamodel"; sourceTree = "<group>"; };
 		E2A2E30F1D568F7F00081451 /* Duplet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Duplet.swift; sourceTree = "<group>"; };
 		E2CE379F1D5FC167006C6336 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
@@ -75,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E22BAC8D1DD7B44500753065 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,11 +100,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E22BAC881DD7B3AF00753065 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E22BAC8C1DD7B44500753065 /* MapKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E2747FF11D451E7F00C97A1C = {
 			isa = PBXGroup;
 			children = (
 				E2747FFC1D451E8000C97A1C /* Ticket To Ride */,
 				E2747FFB1D451E8000C97A1C /* Products */,
+				E22BAC881DD7B3AF00753065 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,7 +130,7 @@
 		E2747FFC1D451E8000C97A1C /* Ticket To Ride */ = {
 			isa = PBXGroup;
 			children = (
-				E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */,
+				E22BAC8B1DD7B3AF00753065 /* Ticket To Ride.entitlements */,
 				E2107CA61D680877003950BA /* Train+CoreDataProperties.swift */,
 				E2107CA71D680877003950BA /* Train.swift */,
 				E2107CA81D680877003950BA /* Station+CoreDataProperties.swift */,
@@ -130,9 +144,10 @@
 				E202A4101D862E160093EDCD /* Date.swift */,
 				E2A2E30F1D568F7F00081451 /* Duplet.swift */,
 				E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */,
+				E2107CA41D67FE19003950BA /* TimetableViewController.swift */,
+				E22BAC8E1DD7B79400753065 /* TrainMapView.swift */,
 				E27480041D451E8000C97A1C /* Assets.xcassets */,
 				E27480061D451E8000C97A1C /* Main.storyboard */,
-				E2107CA41D67FE19003950BA /* TimetableViewController.swift */,
 				E27480091D451E8000C97A1C /* Info.plist */,
 				E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */,
 			);
@@ -203,15 +218,23 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Tom Curtis";
 				TargetAttributes = {
 					E2747FF91D451E8000C97A1C = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = AK82F3CVGL;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
-							com.apple.Sandbox = {
+							com.apple.ApplicationGroups.Mac = {
 								enabled = 0;
+							};
+							com.apple.Maps.Mac = {
+								enabled = 1;
+							};
+							com.apple.Sandbox = {
+								enabled = 1;
 							};
 						};
 					};
@@ -280,6 +303,7 @@
 				E202A4111D862E160093EDCD /* Date.swift in Sources */,
 				E2F080DA1D9861E700C13368 /* ImportOperations.swift in Sources */,
 				E24F41E01D471FFB005A4D76 /* String.swift in Sources */,
+				E22BAC8F1DD7B79400753065 /* TrainMapView.swift in Sources */,
 				E2107CAC1D680877003950BA /* Train+CoreDataProperties.swift in Sources */,
 				E2107CAE1D680877003950BA /* Station+CoreDataProperties.swift in Sources */,
 				E2107CB01D680877003950BA /* RouteEntry+CoreDataProperties.swift in Sources */,
@@ -360,7 +384,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -428,11 +452,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Ticket To Ride.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = AK82F3CVGL;
 				INFOPLIST_FILE = "Train Map/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dinotash.ticketToRide;
 				PRODUCT_NAME = "Ticket To Ride";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -441,7 +470,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Ticket To Ride.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = AK82F3CVGL;
 				INFOPLIST_FILE = "Train Map/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dinotash.ticketToRide;

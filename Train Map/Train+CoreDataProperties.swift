@@ -32,5 +32,4 @@ extension Train {
     @NSManaged var routeEntries: NSOrderedSet?
     @NSManaged var runsOn: NSSet?
     @NSManaged var sleeper: NSManagedObject?
-
 }

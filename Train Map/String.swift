@@ -124,4 +124,8 @@ extension String {
             return combined_string
         }
     }
+    
+    func isNumeric() -> Bool {
+        return Int(self) != nil
+    }
 }
