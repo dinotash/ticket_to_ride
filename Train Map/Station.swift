@@ -40,7 +40,7 @@ class Station: NSManagedObject, MKAnnotation {
         else {
             //work it out -- maths thanks to here (converted from javascript)
             //https://github.com/chrisveness/geodesy/blob/master/osgridref.js
-
+            
             let a = 6377563.396
             let b = 6356256.909                                // Airy 1830 major & minor semi-axes
             let F0 = 0.9996012717                              // NatGrid scale factor on central meridian
