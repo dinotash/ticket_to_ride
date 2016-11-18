@@ -130,9 +130,9 @@
 				E202A4101D862E160093EDCD /* Date.swift */,
 				E2A2E30F1D568F7F00081451 /* Duplet.swift */,
 				E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */,
+				E2107CA41D67FE19003950BA /* TimetableViewController.swift */,
 				E27480041D451E8000C97A1C /* Assets.xcassets */,
 				E27480061D451E8000C97A1C /* Main.storyboard */,
-				E2107CA41D67FE19003950BA /* TimetableViewController.swift */,
 				E27480091D451E8000C97A1C /* Info.plist */,
 				E27480011D451E8000C97A1C /* TicketToRide.xcdatamodeld */,
 			);

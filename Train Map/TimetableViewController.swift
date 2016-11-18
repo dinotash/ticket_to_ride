@@ -37,9 +37,10 @@ class TimetableWindowController: NSWindowController {
         
         //set the toolbar items to their defaults -- today's date, first station
         self.populateDropDown()
+        self.currentStationName = self.stationDropDownMenu.item(at: 0)!.title
         let datePicker = self.timetableDatePicker.view! as! NSDatePicker
         datePicker.dateValue = Date()
-        self.currentStationName = self.stationDropDownMenu.item(at: 0)!.title
+        self.setDateRange()
         
         //update the contents
         self.updateTimetable()
@@ -67,16 +68,17 @@ class TimetableWindowController: NSWindowController {
         }
     }
     
-    
     @IBAction func chooseNewStation(_ sender: NSPopUpButtonCell) {
         self.currentStationName = sender.title
-        
-        //put limits on dates available for that station
+        self.setDateRange()
+        self.updateTimetable()
+    }
+    
+    func setDateRange() {
         let datePicker = self.timetableDatePicker.view! as! NSDatePicker
-        
         let stationFetch = NSFetchRequest<Station>(entityName: "Station")
         stationFetch.fetchLimit = 1
-        stationFetch.predicate = NSPredicate(format: "name == %@", sender.title)
+        stationFetch.predicate = NSPredicate(format: "name == %@", self.currentStationName)
         do {
             let newStation = try self.MOC!.fetch(stationFetch)[0]
             let stationDateRange = newStation.dateRange()
@@ -87,8 +89,7 @@ class TimetableWindowController: NSWindowController {
             datePicker.minDate = Date.distantPast
             datePicker.maxDate = Date.distantFuture
         }
-        
-        self.updateTimetable()
+        self.currentDate = datePicker.dateValue
     }
     
     @IBAction func chooseDate(_ sender: NSToolbarItem) {
