@@ -16,7 +16,6 @@ class Station: NSManagedObject, MKAnnotation {
     static let manchesterPiccadilly = CLLocationCoordinate2DMake(53.477, -2.23)
     static let manchesterPiccadillyNorthing = 63978
     static let manchesterPiccadillyEasting = 13849
-
     
     var mapPoint: CLLocationCoordinate2D?
 

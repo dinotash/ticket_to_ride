@@ -23,7 +23,7 @@ class TrainMapViewController: NSViewController, MKMapViewDelegate {
         
         //set up map and its location
         mapView.delegate = self
-        mapView.mapType = MKMapType.satelliteFlyover //allow 3d approach
+        mapView.mapType = MKMapType.satellite //allow 3d approach
         let initialLocation = CLLocation(latitude: 54.233560, longitude: -4.523264) //centre on the Isle of Man
         mapView.centreMapOnLocation(location: initialLocation, regionRadius: 500000)
         
@@ -36,6 +36,28 @@ class TrainMapViewController: NSViewController, MKMapViewDelegate {
                     mapView.addAnnotation(station)
                 }
             }
+        }
+        catch {
+            //pass
+        }
+        
+        //draw a train -> first one giving a real result
+        let trainFetch = NSFetchRequest<Train>(entityName: "Train")
+        do {
+            let trainList = try self.MOC.fetch(trainFetch)
+            var trainLines: [MKPolyline] = []
+            var trainCount = 0
+            for train in trainList {
+                if trainCount > 10000 {
+                    break
+                }
+                let trainLine = train.routeLine()
+                if trainLine != nil {
+                    trainLines.append(trainLine!)
+                }
+                trainCount += 1
+            }
+            mapView.addOverlays(trainLines)
         }
         catch {
             //pass
@@ -59,6 +81,17 @@ class TrainMapViewController: NSViewController, MKMapViewDelegate {
             return view
         }
         return nil
+    }
+    
+    //determine how each line should be shown
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let overlay = overlay as? MKPolyline {
+            let polylineRenderer = MKPolylineRenderer(polyline: overlay)
+            polylineRenderer.strokeColor = NSColor.red
+            polylineRenderer.lineWidth = 3
+            return polylineRenderer
+        }
+        return MKOverlayRenderer(overlay: overlay)
     }
 }
 
