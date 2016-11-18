@@ -663,11 +663,16 @@ Gw
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <mapView fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Fwf-SE-W0O" customClass="TrainMapView" customModule="Ticket_To_Ride" customModuleProvider="target">
+                            <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Fwf-SE-W0O" customClass="TrainMapView" customModule="Ticket_To_Ride" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </mapView>
                         </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Fwf-SE-W0O" secondAttribute="bottom" id="736-Nr-YrM"/>
+                            <constraint firstItem="Fwf-SE-W0O" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="EuJ-7W-MTk"/>
+                            <constraint firstItem="Fwf-SE-W0O" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="S0j-I8-1PM"/>
+                            <constraint firstAttribute="trailing" secondItem="Fwf-SE-W0O" secondAttribute="trailing" id="h1b-qQ-fBC"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="mapView" destination="Fwf-SE-W0O" id="7Wl-dh-eNH"/>
