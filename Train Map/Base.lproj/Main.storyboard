@@ -345,7 +345,7 @@ Gw
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="O03-Ov-6ZE"/>
                                 <toolbarItem implicitItemIdentifier="4D86DCFD-F549-46DB-98CB-4D105A7796D3" label="Station" paletteLabel="Station" id="5B2-z6-yNh">
                                     <nil key="toolTip"/>
-                                    <size key="minSize" width="102" height="27"/>
+                                    <size key="minSize" width="100" height="26"/>
                                     <size key="maxSize" width="300" height="27"/>
                                     <popUpButton key="view" verticalHuggingPriority="750" id="7Gl-e7-4dn">
                                         <rect key="frame" x="0.0" y="14" width="100" height="26"/>

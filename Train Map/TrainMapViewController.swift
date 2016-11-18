@@ -31,11 +31,34 @@ class TrainMapViewController: NSViewController, MKMapViewDelegate {
         let stationFetch = NSFetchRequest<Station>(entityName: "Station")
         do {
             let stationList = try self.MOC.fetch(stationFetch)
-            mapView.addAnnotations(stationList)
+            for station in stationList {
+                if (Int(station.northing!) > 0) && (Int(station.easting!) > 0) {
+                    mapView.addAnnotation(station)
+                }
+            }
         }
         catch {
             //pass
         }
+    }
+    
+    //determine how each annotation should be shown
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if let annotation = annotation as? Station {
+            let identifier = "stationmarker"
+            var view: MKAnnotationView
+            if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView {
+                dequeuedView.annotation = annotation
+                view = dequeuedView
+            }
+            else {
+                view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                view.canShowCallout = true
+                view.image = NSImage(named: "blackCircle")
+            }
+            return view
+        }
+        return nil
     }
 }
 
