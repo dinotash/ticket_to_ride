@@ -23,6 +23,7 @@
 		E27480051D451E8000C97A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E27480041D451E8000C97A1C /* Assets.xcassets */; };
 		E27480081D451E8000C97A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27480061D451E8000C97A1C /* Main.storyboard */; };
 		E2A2E3101D568F7F00081451 /* Duplet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A2E30F1D568F7F00081451 /* Duplet.swift */; };
+		E2A7C9601DDE9CF3002338FD /* TrainMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A7C95F1DDE9CF3002338FD /* TrainMapViewController.swift */; };
 		E2F080DA1D9861E700C13368 /* ImportOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 		E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TicketToRide.entitlements; sourceTree = "<group>"; };
 		E2A2A1021DD6F9F0005E063E /* TicketToRide 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TicketToRide 2.xcdatamodel"; sourceTree = "<group>"; };
 		E2A2E30F1D568F7F00081451 /* Duplet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Duplet.swift; sourceTree = "<group>"; };
+		E2A7C95F1DDE9CF3002338FD /* TrainMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrainMapViewController.swift; sourceTree = "<group>"; };
 		E2CE379F1D5FC167006C6336 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,6 +133,7 @@
 				E2A2E30F1D568F7F00081451 /* Duplet.swift */,
 				E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */,
 				E2107CA41D67FE19003950BA /* TimetableViewController.swift */,
+				E2A7C95F1DDE9CF3002338FD /* TrainMapViewController.swift */,
 				E27480041D451E8000C97A1C /* Assets.xcassets */,
 				E27480061D451E8000C97A1C /* Main.storyboard */,
 				E27480091D451E8000C97A1C /* Info.plist */,
@@ -278,6 +281,7 @@
 			files = (
 				E2498DB71D553F6600EFC7D6 /* ProgressViewController.swift in Sources */,
 				E202A4111D862E160093EDCD /* Date.swift in Sources */,
+				E2A7C9601DDE9CF3002338FD /* TrainMapViewController.swift in Sources */,
 				E2F080DA1D9861E700C13368 /* ImportOperations.swift in Sources */,
 				E24F41E01D471FFB005A4D76 /* String.swift in Sources */,
 				E2107CAC1D680877003950BA /* Train+CoreDataProperties.swift in Sources */,
