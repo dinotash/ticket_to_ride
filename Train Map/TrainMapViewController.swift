@@ -11,7 +11,10 @@ import Cocoa
 import MapKit
 
 class TrainMapViewController: NSViewController, MKMapViewDelegate {
+//    @IBOutlet weak var mapView: TrainMapView!
     @IBOutlet weak var mapView: TrainMapView!
+    
+    
     let MOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType) //create MOC from scratch
     
     override func viewDidLoad() {
@@ -48,7 +51,7 @@ class TrainMapViewController: NSViewController, MKMapViewDelegate {
             var trainLines: [MKPolyline] = []
             var trainCount = 0
             for train in trainList {
-                if trainCount > 10000 {
+                if trainCount > 100 {
                     break
                 }
                 let trainLine = train.routeLine()

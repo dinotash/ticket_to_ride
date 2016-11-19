@@ -119,13 +119,13 @@
 			isa = PBXGroup;
 			children = (
 				E29815E21D45A7AF00975BEB /* TicketToRide.entitlements */,
+				E2747FFD1D451E8000C97A1C /* AppDelegate.swift */,
 				E2107CA61D680877003950BA /* Train+CoreDataProperties.swift */,
 				E2107CA71D680877003950BA /* Train.swift */,
 				E2107CA81D680877003950BA /* Station+CoreDataProperties.swift */,
 				E2107CA91D680877003950BA /* Station.swift */,
 				E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */,
 				E2107CAB1D680877003950BA /* RouteEntry.swift */,
-				E2747FFD1D451E8000C97A1C /* AppDelegate.swift */,
 				E2747FFF1D451E8000C97A1C /* ImportViewController.swift */,
 				E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */,
 				E24F41DF1D471FFB005A4D76 /* String.swift */,

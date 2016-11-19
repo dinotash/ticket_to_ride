@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="QVk-97-9cL">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
@@ -110,6 +110,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
+                                        <menuItem title="Map" keyEquivalent="n" id="ILC-jv-pUT">
+                                            <connections>
+                                                <segue destination="QVk-97-9cL" kind="show" id="UZF-uy-tUn"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Timetable browser" keyEquivalent="t" id="ES1-Z4-Ygx">
                                             <connections>
                                                 <segue destination="7bd-bW-KAv" kind="show" id="dFP-5P-nMz"/>
@@ -288,48 +293,6 @@ Gw
             <point key="canvasLocation" x="1234" y="290.5"/>
         </scene>
         <!--Window Controller-->
-        <scene sceneID="R2V-B0-nI4">
-            <objects>
-                <windowController showSeguePresentationStyle="single" id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Ticket To Ride" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="480" height="270"/>
-                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-                        <toolbar key="toolbar" implicitIdentifier="04CE94B2-20E0-48B4-B35F-ED88DB360CE4" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="xPK-ps-Ngm">
-                            <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="uEF-RK-63q"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="ICf-Bh-2Kh"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="9OB-hv-yUA"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="Ref-dr-rhF"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="kuT-T1-2Mj"/>
-                                <toolbarItem implicitItemIdentifier="BC43601E-8074-449E-9CE9-D2D971663197" label="Import" paletteLabel="Import" tag="-1" id="Hoo-Zy-Imr">
-                                    <connections>
-                                        <segue destination="I77-GH-4Mv" kind="show" id="Xph-xW-nw7"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="C3302A84-AA52-4D8A-A5B3-CBD8A6C936BB" label="Timetable" paletteLabel="Timetable" tag="-1" id="fVh-vm-g6W">
-                                    <connections>
-                                        <segue destination="7bd-bW-KAv" kind="show" id="Pwk-6g-0SU"/>
-                                    </connections>
-                                </toolbarItem>
-                            </allowedToolbarItems>
-                            <defaultToolbarItems>
-                                <toolbarItem reference="fVh-vm-g6W"/>
-                                <toolbarItem reference="kuT-T1-2Mj"/>
-                                <toolbarItem reference="Hoo-Zy-Imr"/>
-                            </defaultToolbarItems>
-                        </toolbar>
-                    </window>
-                    <connections>
-                        <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
-                    </connections>
-                </windowController>
-                <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="35" y="311"/>
-        </scene>
-        <!--Window Controller-->
         <scene sceneID="6Ay-4B-7Fu">
             <objects>
                 <windowController showSeguePresentationStyle="single" id="7bd-bW-KAv" customClass="TimetableWindowController" customModule="Ticket_To_Ride" customModuleProvider="target" sceneMemberID="viewController">
@@ -406,7 +369,7 @@ Gw
                 <customObject id="lA2-NF-e5u" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="2C8-Ey-60x"/>
             </objects>
-            <point key="canvasLocation" x="-861" y="578"/>
+            <point key="canvasLocation" x="-758" y="580"/>
         </scene>
         <!--Timetable View Controller-->
         <scene sceneID="IFf-2m-9Kz">
@@ -653,38 +616,76 @@ Gw
                 </viewController>
                 <customObject id="Uac-yZ-f6m" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-585" y="1078"/>
+            <point key="canvasLocation" x="-758" y="987"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="A6y-6p-jFj">
+            <objects>
+                <windowController showSeguePresentationStyle="single" id="QVk-97-9cL" sceneMemberID="viewController">
+                    <window key="window" title="Ticket to Ride" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="J5N-jv-fHm">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="181" y="186" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1366" height="745"/>
+                        <toolbar key="toolbar" implicitIdentifier="7E2B5D73-AFE8-415E-9A48-108E9565E8B4" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="VPu-SF-5Lv">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="aLB-8S-FeX"/>
+                                <toolbarItem implicitItemIdentifier="59C0AF22-DA4F-44BE-93B3-9C4A2111D7BE" label="Timetable" paletteLabel="Timetable" tag="-1" id="waE-Wn-jnu">
+                                    <connections>
+                                        <segue destination="7bd-bW-KAv" kind="show" id="cXo-aB-k2v"/>
+                                    </connections>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="514E1A30-62B1-49C3-A526-511FA222D716" label="Import" paletteLabel="Import" tag="-1" id="T3Y-H9-fjt">
+                                    <connections>
+                                        <segue destination="I77-GH-4Mv" kind="show" id="yG2-aC-tTM"/>
+                                    </connections>
+                                </toolbarItem>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="waE-Wn-jnu"/>
+                                <toolbarItem reference="aLB-8S-FeX"/>
+                                <toolbarItem reference="T3Y-H9-fjt"/>
+                            </defaultToolbarItems>
+                        </toolbar>
+                    </window>
+                    <connections>
+                        <segue destination="yS8-Fc-Cos" kind="relationship" relationship="window.shadowedContentViewController" id="yO9-xt-hlM"/>
+                    </connections>
+                </windowController>
+                <customObject id="Lp0-Nt-Hb6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="11" y="516"/>
         </scene>
         <!--Train Map View Controller-->
-        <scene sceneID="hIz-AP-VOD">
+        <scene sceneID="Y51-vN-Pdf">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="TrainMapViewController" customModule="Ticket_To_Ride" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="m2S-Jp-Qdl">
+                <viewController id="yS8-Fc-Cos" customClass="TrainMapViewController" customModule="Ticket_To_Ride" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Kyw-I5-f0H">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <mapView mapType="satellite" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fwf-SE-W0O" customClass="TrainMapView" customModule="Ticket_To_Ride" customModuleProvider="target">
+                            <mapView mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="E2k-jY-dAU" customClass="TrainMapView" customModule="Ticket_To_Ride" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             </mapView>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="Fwf-SE-W0O" secondAttribute="bottom" id="0ch-HG-1JP"/>
-                            <constraint firstAttribute="trailing" secondItem="Fwf-SE-W0O" secondAttribute="trailing" id="a8h-lM-hV1"/>
-                            <constraint firstItem="Fwf-SE-W0O" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="aiR-dh-QQA"/>
-                            <constraint firstItem="Fwf-SE-W0O" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="fdH-d0-0zY"/>
+                            <constraint firstAttribute="bottom" secondItem="E2k-jY-dAU" secondAttribute="bottom" id="7Oe-w9-vm5"/>
+                            <constraint firstAttribute="trailing" secondItem="E2k-jY-dAU" secondAttribute="trailing" id="uQ9-j7-TfT"/>
+                            <constraint firstItem="E2k-jY-dAU" firstAttribute="top" secondItem="Kyw-I5-f0H" secondAttribute="top" id="wzh-Br-Ato"/>
+                            <constraint firstItem="E2k-jY-dAU" firstAttribute="leading" secondItem="Kyw-I5-f0H" secondAttribute="leading" id="xkA-fX-UeB"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="mapView" destination="Fwf-SE-W0O" id="7Wl-dh-eNH"/>
+                        <outlet property="mapView" destination="E2k-jY-dAU" id="mxq-XG-HLw"/>
                     </connections>
                 </viewController>
-                <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="ydy-Bp-wum" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="35" y="714"/>
+            <point key="canvasLocation" x="37" y="963"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Xph-xW-nw7"/>
-        <segue reference="Pwk-6g-0SU"/>
+        <segue reference="yG2-aC-tTM"/>
+        <segue reference="cXo-aB-k2v"/>
     </inferredMetricsTieBreakers>
 </document>
