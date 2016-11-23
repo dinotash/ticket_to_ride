@@ -16,9 +16,9 @@ class RouteEntry: NSManagedObject {
     
     //return in HHMM the earliest time for any of the entry's time fields
     func earliest_time() -> String {
-        let arrival = String.timeHHMM(scheduled_arrival_hour, minute: scheduled_arrival_minute)
-        let departure = String.timeHHMM(scheduled_departure_hour, minute: scheduled_departure_minute)
-        let pass = String.timeHHMM(scheduled_pass_hour, minute: scheduled_pass_minute)
+        let arrival: String = String.timeHHMM(scheduled_arrival_hour, minute: scheduled_arrival_minute)
+        let departure: String = String.timeHHMM(scheduled_departure_hour, minute: scheduled_departure_minute)
+        let pass: String = String.timeHHMM(scheduled_pass_hour, minute: scheduled_pass_minute)
         
         //collect the non-nil strings -> at least one will exist
         var times = [String]()
@@ -47,21 +47,21 @@ extension RouteEntry: Comparable {
         }
         
         //check all the fields to see if they're all the same
-        let fields = NSEntityDescription.entity(forEntityName: lhs.className, in: lhs.managedObjectContext!)!.attributeKeys
-        let lhs_fields = lhs.dictionaryWithValues(forKeys: fields)
-        let rhs_fields = rhs.dictionaryWithValues(forKeys: fields)
+        let fields: [String] = NSEntityDescription.entity(forEntityName: lhs.className, in: lhs.managedObjectContext!)!.attributeKeys
+        let lhs_fields: [String: Any] = lhs.dictionaryWithValues(forKeys: fields)
+        let rhs_fields: [String: Any] = rhs.dictionaryWithValues(forKeys: fields)
         
         //check every field in turn
         for field in fields {
-            if let lhs_value = lhs_fields[field] as? NSNumber {
-                let rhs_value = rhs_fields[field] as! NSNumber
+            if let lhs_value: NSNumber = lhs_fields[field] as? NSNumber {
+                let rhs_value: NSNumber = rhs_fields[field] as! NSNumber
                 if (lhs_value != rhs_value) {
                     return false
                 }
             }
             
-            if let lhs_value = lhs_fields[field] as? String {
-                let rhs_value = rhs_fields[field] as! String
+            if let lhs_value: String = lhs_fields[field] as? String {
+                let rhs_value: String = rhs_fields[field] as! String
                 if (lhs_value != rhs_value) {
                     return false
                 }
@@ -72,8 +72,8 @@ extension RouteEntry: Comparable {
     
     static func < (lhs: RouteEntry, rhs: RouteEntry) -> Bool {
         // order -> by hour then minute in each one's earliest time
-        let lhs_time = lhs.earliest_time()
-        let rhs_time = rhs.earliest_time()
+        let lhs_time: String = lhs.earliest_time()
+        let rhs_time: String = rhs.earliest_time()
         
         if lhs_time < rhs_time {
             return true

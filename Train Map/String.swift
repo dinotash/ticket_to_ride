@@ -34,13 +34,12 @@ extension String {
     
     //method to take a substring in an easy manner
     func substring(_ start: Int, end: Int, trim: Bool=true, trimDashes: Bool=false) -> String {
-        let substringStart = self.characters.index(self.startIndex, offsetBy: start)
+        let substringStart: Index? = self.characters.index(self.startIndex, offsetBy: start)
         
         //if end is too long, wrap to end of string, otherwise use real value
-        let endLimit = self.characters.index(self.endIndex, offsetBy: -1, limitedBy: self.startIndex)
-        let substringEnd = self.characters.index(self.startIndex, offsetBy: end, limitedBy: endLimit!)
-        
-        var newSubstring = self[substringStart...substringEnd!]
+        let endLimit: Index? = self.characters.index(self.endIndex, offsetBy: -1, limitedBy: self.startIndex)
+        let substringEnd: Index? = self.characters.index(self.startIndex, offsetBy: end, limitedBy: endLimit!)
+        var newSubstring: String = self[substringStart!...substringEnd!]
         
         if trimDashes { // to cope with ZTR file
             newSubstring = newSubstring.trimmingCharacters(in: CharacterSet(charactersIn: "-"))
@@ -55,7 +54,7 @@ extension String {
     }
     
     func formatName() -> String {
-        var newName = self.capitalized(with: Locale(identifier: "en_GB"))
+        var newName: String = self.capitalized(with: Locale(identifier: "en_GB"))
         newName = newName.replacingOccurrences(of: "<Cie>", with: "<CIE>")
         newName = newName.replacingOccurrences(of: "<Lul>", with: "<LUL>")
         newName = newName.replacingOccurrences(of: "<Nir>", with: "<NIR>")
@@ -68,7 +67,7 @@ extension String {
     func yymmddDate() -> Date? {
         if (self.characters.count == 6) { //
             if (Int(self) != nil) { //check it's numeric
-                let dateFormatter = DateFormatter()
+                let dateFormatter: DateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyyMMdd"
                 
                 //deal with case for open ended services, treat as running until year 3000
@@ -77,16 +76,16 @@ extension String {
                 }
                     //otherwise, check the century and process as expected
                 else {
-                    let shortYear = self.substring(0, end: 1)
-                    let shortYearNum = Int(shortYear)
+                    let shortYear: String = self.substring(0, end: 1)
+                    let shortYearNum: Int = Int(shortYear)!
                     if (shortYearNum >= 60) { //60-99 assumed to be 1960-1999
-                        let century = "19"
-                        let fullDate = century + self
+                        let century: String = "19"
+                        let fullDate: String = century + self
                         return dateFormatter.date(from: fullDate)
                     }
                     else {
-                        let century = "20" //00-59 assumed to be 2000-2059
-                        let fullDate = century + self
+                        let century: String = "20" //00-59 assumed to be 2000-2059
+                        let fullDate: String = century + self
                         return dateFormatter.date(from: fullDate)
                     }
                 }
@@ -99,8 +98,8 @@ extension String {
         if (self != "") {
             if (self.characters.count == 4) {
                 if (Int(self) != nil) {
-                    let hour = Int(self.substring(0, end: 1))!
-                    let minute = Int(self.substring(2, end: 3))!
+                    let hour: Int = Int(self.substring(0, end: 1))!
+                    let minute: Int = Int(self.substring(2, end: 3))!
                     return (hour, minute)
                 }
             }
@@ -114,9 +113,9 @@ extension String {
             return ""
         }
         
-        let hour_string = String(format: "%02d", hour!.intValue)
-        let minute_string = String(format: "%02d", minute!.intValue)
-        let combined_string = hour_string + minute_string
+        let hour_string: String = String(format: "%02d", hour!.intValue)
+        let minute_string: String = String(format: "%02d", minute!.intValue)
+        let combined_string: String = hour_string + minute_string
         if (combined_string == "0000") {
             return "" //blank string
         }

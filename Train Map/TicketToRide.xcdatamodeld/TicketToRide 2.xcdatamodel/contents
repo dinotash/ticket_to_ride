@@ -43,6 +43,7 @@
         <relationship name="aliases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Alias" inverseName="dataset" inverseEntity="Alias" syncable="YES"/>
         <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Group" inverseName="dataset" inverseEntity="Group" syncable="YES"/>
         <relationship name="links" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="dataset" inverseEntity="Link" syncable="YES"/>
+        <relationship name="pairs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Pair" inverseName="dataset" inverseEntity="Pair" syncable="YES"/>
         <relationship name="routeEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="dataset" inverseEntity="RouteEntry" syncable="YES"/>
         <relationship name="stations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Station" inverseName="dataset" inverseEntity="Station" syncable="YES"/>
         <relationship name="tiplocs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tiploc" inverseName="dataset" inverseEntity="Tiploc" syncable="YES"/>
@@ -70,6 +71,14 @@
         <attribute name="string" attributeType="String" syncable="YES"/>
         <relationship name="links" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="mode" inverseEntity="Link" syncable="YES"/>
     </entity>
+    <entity name="Pair" representedClassName=".Pair" syncable="YES">
+        <attribute name="count" attributeType="Integer 16" minValueString="0" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="dataset" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="pairs" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="endRouteEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="prevPair" inverseEntity="RouteEntry" syncable="YES"/>
+        <relationship name="from" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="pairsFrom" inverseEntity="Station" syncable="YES"/>
+        <relationship name="startRouteEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="nextPair" inverseEntity="RouteEntry" syncable="YES"/>
+        <relationship name="to" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="pairsTo" inverseEntity="Station" syncable="YES"/>
+    </entity>
     <entity name="Power" syncable="YES">
         <attribute name="code" attributeType="String" syncable="YES"/>
         <attribute name="string" attributeType="String" syncable="YES"/>
@@ -95,6 +104,10 @@
         <attribute name="scheduled_pass_minute" optional="YES" attributeType="Integer 16" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Activity" inverseName="routeEntries" inverseEntity="Activity" syncable="YES"/>
         <relationship name="dataset" maxCount="1" deletionRule="Nullify" destinationEntity="Dataset" inverseName="routeEntries" inverseEntity="Dataset" syncable="YES"/>
+        <relationship name="next" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="prev" inverseEntity="RouteEntry" syncable="YES"/>
+        <relationship name="nextPair" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pair" inverseName="startRouteEntries" inverseEntity="Pair" syncable="YES"/>
+        <relationship name="prev" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="next" inverseEntity="RouteEntry" syncable="YES"/>
+        <relationship name="prevPair" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pair" inverseName="endRouteEntries" inverseEntity="Pair" syncable="YES"/>
         <relationship name="station" maxCount="1" deletionRule="Nullify" destinationEntity="Station" inverseName="routeEntries" inverseEntity="Station" syncable="YES"/>
         <relationship name="train" maxCount="1" deletionRule="Nullify" destinationEntity="Train" inverseName="routeEntries" inverseEntity="Train" syncable="YES"/>
     </entity>
@@ -118,6 +131,8 @@
         <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Group" inverseName="stations" inverseEntity="Group" syncable="YES"/>
         <relationship name="linksFrom" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="origin" inverseEntity="Link" syncable="YES"/>
         <relationship name="linksTo" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Link" inverseName="destination" inverseEntity="Link" syncable="YES"/>
+        <relationship name="pairsFrom" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Pair" inverseName="from" inverseEntity="Pair" syncable="YES"/>
+        <relationship name="pairsTo" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Pair" inverseName="to" inverseEntity="Pair" syncable="YES"/>
         <relationship name="routeEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RouteEntry" inverseName="station" inverseEntity="RouteEntry" syncable="YES"/>
         <relationship name="tiploc" toMany="YES" deletionRule="Nullify" destinationEntity="Tiploc" inverseName="station" inverseEntity="Tiploc" syncable="YES"/>
     </entity>
@@ -160,15 +175,16 @@
         <element name="Category" positionX="-351" positionY="18" width="128" height="105"/>
         <element name="Catering" positionX="-333" positionY="36" width="128" height="90"/>
         <element name="Class" positionX="-351" positionY="18" width="128" height="90"/>
-        <element name="Dataset" positionX="-335" positionY="-171" width="128" height="255"/>
-        <element name="Group" positionX="403" positionY="9" width="128" height="90"/>
+        <element name="Dataset" positionX="-335" positionY="-171" width="128" height="30"/>
+        <element name="Group" positionX="403" positionY="9" width="128" height="30"/>
         <element name="Link" positionX="-378" positionY="-9" width="128" height="210"/>
         <element name="LinkMode" positionX="-387" positionY="-18" width="128" height="75"/>
+        <element name="Pair" positionX="-387" positionY="-9" width="128" height="135"/>
         <element name="Power" positionX="-387" positionY="-18" width="128" height="90"/>
         <element name="Reservation" positionX="-369" positionY="0" width="128" height="90"/>
-        <element name="RouteEntry" positionX="-369" positionY="0" width="128" height="285"/>
+        <element name="RouteEntry" positionX="-369" positionY="0" width="128" height="345"/>
         <element name="Sleeper" positionX="-360" positionY="9" width="128" height="90"/>
-        <element name="Station" positionX="-279" positionY="126" width="128" height="285"/>
+        <element name="Station" positionX="-279" positionY="126" width="128" height="315"/>
         <element name="Tiploc" positionX="-45" positionY="36" width="128" height="90"/>
         <element name="Train" positionX="-360" positionY="9" width="128" height="315"/>
         <element name="Weekday" positionX="-342" positionY="27" width="128" height="105"/>

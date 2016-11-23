@@ -28,5 +28,6 @@ extension Station {
     @NSManaged var linksTo: NSSet?
     @NSManaged var routeEntries: NSSet?
     @NSManaged var tiploc: NSSet?
-
+    @NSManaged var pairTo: NSManagedObject?
+    @NSManaged var pairFrom: NSManagedObject?
 }

@@ -24,21 +24,21 @@ class TimetableWindowController: NSWindowController {
     @IBOutlet weak var stationDropDownMenu: NSMenu!
     @IBOutlet weak var timetableDatePicker: NSToolbarItem!
     
-    var currentDate = Date()
-    var currentStationName = ""
+    var currentDate: Date = Date()
+    var currentStationName: String = ""
     var MOC: NSManagedObjectContext? = nil
     
     override func windowDidLoad() {
         super.windowDidLoad()
         
         //extract earliest and latest dates for date picker
-        let timetableViewController = self.contentViewController! as! TimetableViewController
+        let timetableViewController: TimetableViewController = self.contentViewController! as! TimetableViewController
         self.MOC = timetableViewController.MOC
         
         //set the toolbar items to their defaults -- today's date, first station
         self.populateDropDown()
         self.currentStationName = self.stationDropDownMenu.item(at: 0)!.title
-        let datePicker = self.timetableDatePicker.view! as! NSDatePicker
+        let datePicker: NSDatePicker = self.timetableDatePicker.view! as! NSDatePicker
         datePicker.dateValue = Date()
         self.setDateRange()
         
@@ -48,7 +48,7 @@ class TimetableWindowController: NSWindowController {
     
     fileprivate func populateDropDown() {
         //get a list of stations and re-populate the list
-        let stationListFetch = NSFetchRequest<Station>(entityName: "Station")
+        let stationListFetch: NSFetchRequest = NSFetchRequest<Station>(entityName: "Station")
         do {
             //TO DO:
             //  1) Add aliases
@@ -57,9 +57,9 @@ class TimetableWindowController: NSWindowController {
             //sort the names in order and add to the list
             self.stationDropDownMenu.removeAllItems()
             
-            let stationList = try self.MOC!.fetch(stationListFetch)
-            let sortedList = stationList.sorted {$0.name < $1.name}
-            for station in sortedList {
+            let stationList: [Station] = try self.MOC!.fetch(stationListFetch)
+            let sortedList: [Station] = stationList.sorted {$0.name < $1.name}
+            for station: Station in sortedList {
                 self.stationDropDownMenu.addItem(withTitle: station.name!, action: nil, keyEquivalent: "")
             }
         }
@@ -75,13 +75,13 @@ class TimetableWindowController: NSWindowController {
     }
     
     func setDateRange() {
-        let datePicker = self.timetableDatePicker.view! as! NSDatePicker
-        let stationFetch = NSFetchRequest<Station>(entityName: "Station")
+        let datePicker: NSDatePicker = self.timetableDatePicker.view! as! NSDatePicker
+        let stationFetch: NSFetchRequest = NSFetchRequest<Station>(entityName: "Station")
         stationFetch.fetchLimit = 1
         stationFetch.predicate = NSPredicate(format: "name == %@", self.currentStationName)
         do {
-            let newStation = try self.MOC!.fetch(stationFetch)[0]
-            let stationDateRange = newStation.dateRange()
+            let newStation: Station = try self.MOC!.fetch(stationFetch)[0]
+            let stationDateRange: (Date, Date) = newStation.dateRange()
             datePicker.minDate = stationDateRange.0
             datePicker.maxDate = stationDateRange.1
         }
@@ -93,13 +93,13 @@ class TimetableWindowController: NSWindowController {
     }
     
     @IBAction func chooseDate(_ sender: NSToolbarItem) {
-        let datePicker = self.timetableDatePicker.view! as! NSDatePicker
+        let datePicker: NSDatePicker = self.timetableDatePicker.view! as! NSDatePicker
         self.currentDate = datePicker.dateValue
         self.updateTimetable()
     }
 
     fileprivate func updateTimetable() {
-        let timetableViewController = self.contentViewController! as! TimetableViewController
+        let timetableViewController: TimetableViewController = self.contentViewController! as! TimetableViewController
         timetableViewController.loadTimetable(self.currentStationName, date: self.currentDate)
     }
 }
@@ -121,19 +121,17 @@ class TimetableViewController: NSViewController {
     
     fileprivate func loadTimetable(_ station: String, date: Date) {
         //get key details about the date
-        let bankHoliday = date.bankHoliday()
-        let weekday = date.weekday()
+        let bankHoliday: (Bool, Bool) = date.bankHoliday()
+        let weekday: Int = date.weekday()
         
-        let routeEntryFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "RouteEntry")
-        var predicateList = Array<NSPredicate>()
+        let routeEntryFetch: NSFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "RouteEntry")
+        var predicateList: [NSPredicate] = []
         
         //always need right station and day of week
         predicateList.append(NSPredicate(format: "station.name == %@", station))
         predicateList.append(NSPredicate(format: "%i in train.runsOn.number", weekday - 1)) //calendar has Sunday-Sat = 1-7, whereas imported as Sun-Sat = 0-6
         predicateList.append(NSPredicate(format: "train.start < %@", date as NSDate))
         predicateList.append(NSPredicate(format: "train.end > %@", date as NSDate))
-        
-        //CHECK WEEKDAY NUMBERING
         
         //if it's a bank holiday then also need to know if it runs
         if bankHoliday.0 {
@@ -145,8 +143,7 @@ class TimetableViewController: NSViewController {
         
         routeEntryFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
         
-        
-        let stationFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Station")
+        let stationFetch: NSFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Station")
         stationFetch.predicate = NSPredicate(format: "name == %@", station)
         do {
             self.station = try self.MOC.fetch(stationFetch)[0] as? Station
@@ -173,11 +170,11 @@ extension TimetableViewController : NSTableViewDataSource {
 extension TimetableViewController : NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
     
-        var text:String = ""
+        var text: String = ""
         var cellIdentifier: String = ""
         
         // try and make the next row from the list of route entries
-        guard let item = routeEntries?[row] as RouteEntry? else {
+        guard let item: RouteEntry = routeEntries?[row] as RouteEntry? else {
             return nil
         }
         
@@ -204,7 +201,7 @@ extension TimetableViewController : NSTableViewDelegate {
             cellIdentifier = "timetablePlatform"
         }
         
-        let cell = tableView.make(withIdentifier: cellIdentifier, owner: self) as! NSTableCellView
+        let cell: NSTableCellView = tableView.make(withIdentifier: cellIdentifier, owner: self) as! NSTableCellView
         cell.textField?.stringValue = text
         return cell
     }

@@ -30,5 +30,8 @@ extension RouteEntry {
     @NSManaged var dataset: NSManagedObject?
     @NSManaged var station: Station?
     @NSManaged var train: Train?
-
+    @NSManaged var next: RouteEntry?
+    @NSManaged var prev: RouteEntry?
+    @NSManaged var nextPair: NSManagedObject?
+    @NSManaged var prevPair: NSManagedObject?
 }

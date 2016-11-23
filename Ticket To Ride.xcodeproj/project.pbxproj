@@ -15,6 +15,8 @@
 		E2107CAF1D680877003950BA /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CA91D680877003950BA /* Station.swift */; };
 		E2107CB01D680877003950BA /* RouteEntry+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */; };
 		E2107CB11D680877003950BA /* RouteEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2107CAB1D680877003950BA /* RouteEntry.swift */; };
+		E2234F1B1DE18FCD00761AD8 /* Pair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2234F191DE18FCD00761AD8 /* Pair.swift */; };
+		E2234F1C1DE18FCD00761AD8 /* Pair+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2234F1A1DE18FCD00761AD8 /* Pair+CoreDataProperties.swift */; };
 		E2498DB71D553F6600EFC7D6 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */; };
 		E24F41E01D471FFB005A4D76 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24F41DF1D471FFB005A4D76 /* String.swift */; };
 		E2747FFE1D451E8000C97A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2747FFD1D451E8000C97A1C /* AppDelegate.swift */; };
@@ -53,6 +55,8 @@
 		E2107CA91D680877003950BA /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RouteEntry+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E2107CAB1D680877003950BA /* RouteEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteEntry.swift; sourceTree = "<group>"; };
+		E2234F191DE18FCD00761AD8 /* Pair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pair.swift; sourceTree = "<group>"; };
+		E2234F1A1DE18FCD00761AD8 /* Pair+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Pair+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E2498DB61D553F6600EFC7D6 /* ProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
 		E2498DB81D555DF100EFC7D6 /* ImportOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportOperations.swift; sourceTree = "<group>"; };
 		E24F41DF1D471FFB005A4D76 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -122,6 +126,8 @@
 				E2747FFD1D451E8000C97A1C /* AppDelegate.swift */,
 				E2107CA61D680877003950BA /* Train+CoreDataProperties.swift */,
 				E2107CA71D680877003950BA /* Train.swift */,
+				E2234F1A1DE18FCD00761AD8 /* Pair+CoreDataProperties.swift */,
+				E2234F191DE18FCD00761AD8 /* Pair.swift */,
 				E2107CA81D680877003950BA /* Station+CoreDataProperties.swift */,
 				E2107CA91D680877003950BA /* Station.swift */,
 				E2107CAA1D680877003950BA /* RouteEntry+CoreDataProperties.swift */,
@@ -284,7 +290,9 @@
 				E2A7C9601DDE9CF3002338FD /* TrainMapViewController.swift in Sources */,
 				E2F080DA1D9861E700C13368 /* ImportOperations.swift in Sources */,
 				E24F41E01D471FFB005A4D76 /* String.swift in Sources */,
+				E2234F1B1DE18FCD00761AD8 /* Pair.swift in Sources */,
 				E2107CAC1D680877003950BA /* Train+CoreDataProperties.swift in Sources */,
+				E2234F1C1DE18FCD00761AD8 /* Pair+CoreDataProperties.swift in Sources */,
 				E2107CAE1D680877003950BA /* Station+CoreDataProperties.swift in Sources */,
 				E2107CB01D680877003950BA /* RouteEntry+CoreDataProperties.swift in Sources */,
 				E27480001D451E8000C97A1C /* ImportViewController.swift in Sources */,
@@ -552,7 +560,7 @@
 				E2A2A1021DD6F9F0005E063E /* TicketToRide 2.xcdatamodel */,
 				E27480021D451E8000C97A1C /* TicketToRide.xcdatamodel */,
 			);
-			currentVersion = E27480021D451E8000C97A1C /* TicketToRide.xcdatamodel */;
+			currentVersion = E2A2A1021DD6F9F0005E063E /* TicketToRide 2.xcdatamodel */;
 			path = TicketToRide.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

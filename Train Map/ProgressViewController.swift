@@ -26,12 +26,6 @@ class ProgressViewController: NSViewController {
         self.progressLabel.stringValue = "Beginning import..."
     }
     
-    //override var representedObject: AnyObject? {
-      //  didSet {
-            // Update the view, if already loaded.
-      //  }
-    //}
-    
     //tell the main thread to update the progress in inderminate fashion
     func updateIndeterminate(_ label: String) {
         DispatchQueue.main.async(execute: {
