@@ -12,14 +12,16 @@ import MapKit
 
 class Pair: NSManagedObject {
     
-    //draw a line between each of the stations
-    func routeLine() -> MKPolyline? {
+    var polyline: MKPolyline? {
+        //will create line and then update itself silently
         let fromCoord: CLLocationCoordinate2D? = self.from?.coordinate
         let toCoord: CLLocationCoordinate2D? = self.to?.coordinate
         if (fromCoord == nil) || (toCoord == nil) {
             return nil
         }
         let coOrds: [CLLocationCoordinate2D] = [fromCoord!, toCoord!]
-        return MKPolyline(coordinates: coOrds, count: coOrds.count)
+        let polyline: MKPolyline = MKPolyline(coordinates: coOrds, count: coOrds.count)
+        polyline.subtitle = String(self.count!.intValue)
+        return polyline
     }
 }

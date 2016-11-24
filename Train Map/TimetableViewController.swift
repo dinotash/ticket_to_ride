@@ -186,13 +186,13 @@ extension TimetableViewController : NSTableViewDelegate {
             text = item.train!.destination()
             cellIdentifier = "timetableDestination"
         } else if tableColumn == tableView.tableColumns[2] {
-            text = String.timeHHMM(item.scheduled_arrival_hour!, minute: item.scheduled_arrival_minute!)
+            text = String.timeHHMM(item.scheduled_arrival_hour, minute: item.scheduled_arrival_minute)
             cellIdentifier = "timetableArrival"
         } else if tableColumn == tableView.tableColumns[3] {
-            text = String.timeHHMM(item.scheduled_departure_hour!, minute: item.scheduled_departure_minute!)
+            text = String.timeHHMM(item.scheduled_departure_hour, minute: item.scheduled_departure_minute)
             cellIdentifier = "timetableDeparture"
         } else if tableColumn == tableView.tableColumns[4] {
-            text = String.timeHHMM(item.scheduled_pass_hour!, minute: item.scheduled_pass_minute!)
+            text = String.timeHHMM(item.scheduled_pass_hour, minute: item.scheduled_pass_minute)
             cellIdentifier = "timetablePass"
         } else if tableColumn == tableView.tableColumns[5] {
             if item.platform != nil {
