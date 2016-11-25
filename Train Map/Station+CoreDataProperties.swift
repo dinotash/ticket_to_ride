@@ -30,4 +30,5 @@ extension Station {
     @NSManaged var tiploc: NSSet?
     @NSManaged var pairTo: NSManagedObject?
     @NSManaged var pairFrom: NSManagedObject?
+    @NSManaged var count: NSNumber?
 }

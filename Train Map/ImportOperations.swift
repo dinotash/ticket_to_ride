@@ -644,6 +644,12 @@ class ttisImporter: Operation {
                         previousRouteEntry = nil
                         for routeEntry in routeEntries {
                             let re: RouteEntry = routeEntry as! RouteEntry
+                            
+                            //update the station count
+                            let newStationCount: Int = re.station!.count!.intValue + daysCount
+                            re.station!.setValue(newStationCount, forKey: "count")
+                            
+                            //add the train and make the pair
                             re.setValue(newTrain, forKey: "train") //set the one-side of the many-to-one relationship
                             if (previousRouteEntry != nil) {
                                 //maintain doubly linked list
@@ -867,6 +873,12 @@ class ttisImporter: Operation {
             previousRouteEntry = nil
             for routeEntry in routeEntries {
                 let re: RouteEntry = routeEntry as! RouteEntry
+                
+                //update the station count
+                let newStationCount: Int = re.station!.count!.intValue + daysCount
+                re.station!.setValue(newStationCount, forKey: "count")
+                
+                //add the train and make the pair
                 re.setValue(newTrain, forKey: "train") //set the one-side of the many-to-one relationship
                 if (previousRouteEntry != nil) {
                     //maintain doubly linked list
