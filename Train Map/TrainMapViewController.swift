@@ -10,6 +10,54 @@ import Foundation
 import Cocoa
 import MapKit
 
+class TrainMapWindowController: NSWindowController {
+    @IBOutlet weak var trainCountSlider: NSSlider!
+    @IBOutlet weak var trainDatePicker: NSDatePicker!
+    @IBOutlet weak var trainSpeedSlider: NSSlider!
+    
+    var trainMapController: TrainMapViewController? = nil
+    var MOC: NSManagedObjectContext? = nil
+    var count: Int = 0
+    var frameInterval: Double = 0.1 //how many miliseconds between updating map?
+    
+    var trainMapTimer: Timer = Timer()
+    
+    override func windowDidLoad() {
+        super.windowDidLoad()
+        
+        //get relevant train count for slider
+        self.trainMapController = self.contentViewController! as! TrainMapViewController
+        self.MOC = trainMapController!.MOC
+        do {
+            let trainFetch: NSFetchRequest<Train> = NSFetchRequest<Train>(entityName: "Train")
+            let trainMax: Int = try self.MOC!.count(for: trainFetch)
+            self.trainCountSlider.maxValue = Double(trainMax)
+        }
+        catch {
+            print("Unable to count trains in TrainMapWindowController")
+        }
+        
+        //set date range and begin
+        self.setDateRange()
+        self.trainMapTimer = Timer.scheduledTimer(timeInterval: self.frameInterval, target: self, selector: Selector("updateDate"), userInfo: nil, repeats: true)
+    }
+    
+    @IBAction func changeTrainCount(_ sender: Any) {
+        self.trainMapController!.updateTrainViewLimit(limit: Int(self.trainCountSlider.intValue))
+    }
+    
+    func setDateRange() {
+        let dateRange: (earliest: Date, latest: Date) = self.trainMapController!.trainDateRange()
+        self.trainDatePicker.minDate = dateRange.earliest
+        self.trainDatePicker.maxDate = dateRange.latest
+    }
+    
+    @objc func updateDate() {
+        let timeChange = self.trainSpeedSlider.doubleValue
+        self.trainDatePicker.dateValue = self.trainDatePicker.dateValue.addingTimeInterval(timeChange)
+    }
+}
+
 class TrainMapViewController: NSViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: TrainMapView!
     
@@ -25,8 +73,14 @@ class TrainMapViewController: NSViewController, MKMapViewDelegate {
     var minStationCount: Int = 0
     var maxStationCount: Int = 0
     
-    let MOC: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType) //create MOC from scratch
+    //for drawing on trains
+    var trainLimit: Int = 0 //limit on how many trains to draw
+    var trainDateTime: Date = Date() //current date/time shown
+    var trainDateSpeed: Double = 1 //rate at which time moves forward
+    var trainSet: [Train] = [] //trains with which to draw
     
+    let MOC: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType) //create MOC from scratch
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -129,6 +183,46 @@ class TrainMapViewController: NSViewController, MKMapViewDelegate {
         }
         return MKOverlayRenderer(overlay: overlay)
     }
+    
+    //determine admissible date range
+    func trainDateRange() -> (earliest: Date, latest: Date) {
+        //get first result when sorted in right order
+        let trainFetch: NSFetchRequest<Train> = NSFetchRequest(entityName: "Train")
+        trainFetch.fetchLimit = 1
+        let earliestSort = NSSortDescriptor(key: "start", ascending: true)
+        let latestSort = NSSortDescriptor(key: "end", ascending: false)
+        
+        //earliest date first
+        var earliestDate: Date = Date.distantPast
+        do {
+            trainFetch.sortDescriptors = [earliestSort]
+            let earliestResults: [Train] = try self.MOC.fetch(trainFetch)
+            earliestDate = earliestResults[0].value(forKey: "start") as! Date
+        }
+        catch {
+            //pass
+        }
+        
+        //then latest
+        var latestDate: Date = Date.distantFuture
+        do {
+            trainFetch.sortDescriptors = [latestSort]
+            let latestResults: [Train] = try self.MOC.fetch(trainFetch)
+            latestDate = latestResults[0].value(forKey: "end") as! Date
+        }
+        catch {
+            //pass
+        }
+        
+        return (earliest: earliestDate, latest: latestDate)
+    }
+    
+    //receive updated train limit from slider in toolbar
+    func updateTrainViewLimit(limit: Int) {
+        self.trainLimit = limit
+    }
+    
+    
 }
 
 class TrainMapView: MKMapView {

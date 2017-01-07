@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="QVk-97-9cL">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="QVk-97-9cL">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="11762"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -621,40 +621,90 @@ Gw
         <!--Window Controller-->
         <scene sceneID="A6y-6p-jFj">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="QVk-97-9cL" sceneMemberID="viewController">
+                <windowController showSeguePresentationStyle="single" id="QVk-97-9cL" customClass="TrainMapWindowController" customModule="Ticket_To_Ride" customModuleProvider="target" sceneMemberID="viewController">
                     <window key="window" title="Ticket to Ride" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="J5N-jv-fHm">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="181" y="186" width="480" height="270"/>
+                        <rect key="contentRect" x="181" y="186" width="564" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1366" height="745"/>
                         <toolbar key="toolbar" implicitIdentifier="7E2B5D73-AFE8-415E-9A48-108E9565E8B4" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="VPu-SF-5Lv">
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="aLB-8S-FeX"/>
-                                <toolbarItem implicitItemIdentifier="59C0AF22-DA4F-44BE-93B3-9C4A2111D7BE" label="Timetable" paletteLabel="Timetable" tag="-1" id="waE-Wn-jnu">
+                                <toolbarItem implicitItemIdentifier="59C0AF22-DA4F-44BE-93B3-9C4A2111D7BE" label="Timetable" paletteLabel="Timetable" tag="-1" image="NSColumnViewTemplate" id="waE-Wn-jnu">
                                     <connections>
                                         <segue destination="7bd-bW-KAv" kind="show" id="cXo-aB-k2v"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="514E1A30-62B1-49C3-A526-511FA222D716" label="Import" paletteLabel="Import" tag="-1" id="T3Y-H9-fjt">
+                                <toolbarItem implicitItemIdentifier="514E1A30-62B1-49C3-A526-511FA222D716" label="Import" paletteLabel="Import" tag="-1" image="NSAddTemplate" id="T3Y-H9-fjt">
                                     <connections>
                                         <segue destination="I77-GH-4Mv" kind="show" id="yG2-aC-tTM"/>
                                     </connections>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="0A28C131-5801-4A18-8372-6615847B9E54" label="Train count" paletteLabel="Train count" id="fbk-Ut-uQi">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="96" height="21"/>
+                                    <size key="maxSize" width="96" height="21"/>
+                                    <slider key="view" verticalHuggingPriority="750" id="wog-90-HIM">
+                                        <rect key="frame" x="0.0" y="14" width="96" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="kaV-be-08X"/>
+                                        <connections>
+                                            <action selector="changeTrainCount:" target="QVk-97-9cL" id="jPI-cv-HUU"/>
+                                        </connections>
+                                    </slider>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="CFCBD21A-87B3-41B2-B5D1-1B96F986374F" label="Speed" paletteLabel="Speed" id="UeI-pA-r7l">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="96" height="21"/>
+                                    <size key="maxSize" width="100" height="36"/>
+                                    <slider key="view" verticalHuggingPriority="750" id="iBF-k1-OTo">
+                                        <rect key="frame" x="0.0" y="14" width="100" height="26"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <sliderCell key="cell" state="on" alignment="left" minValue="-190" maxValue="200" doubleValue="5" tickMarkPosition="above" numberOfTickMarks="1" sliderType="linear" id="6qW-B2-Vxs"/>
+                                    </slider>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="6E855F28-43B7-4CD3-B997-826E2C1891C2" label="Date" paletteLabel="Date" id="F8E-ue-nzz">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="120" height="22"/>
+                                    <size key="maxSize" width="120" height="148"/>
+                                    <datePicker key="view" verticalHuggingPriority="750" id="I48-pb-xbq">
+                                        <rect key="frame" x="0.0" y="14" width="120" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <datePickerCell key="cell" alignment="left" drawsBackground="NO" datePickerStyle="textField" id="DMI-BP-U3I">
+                                            <font key="font" metaFont="system"/>
+                                            <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
+                                                <!--1982-02-12 08:00:00 -0800-->
+                                                <timeZone key="timeZone" name="US/Pacific"/>
+                                            </calendarDate>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <datePickerElements key="datePickerElements" year="YES" month="YES" day="YES" hour="YES" minute="YES"/>
+                                        </datePickerCell>
+                                    </datePicker>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="waE-Wn-jnu"/>
+                                <toolbarItem reference="aLB-8S-FeX"/>
+                                <toolbarItem reference="F8E-ue-nzz"/>
+                                <toolbarItem reference="aLB-8S-FeX"/>
+                                <toolbarItem reference="fbk-Ut-uQi"/>
+                                <toolbarItem reference="UeI-pA-r7l"/>
                                 <toolbarItem reference="aLB-8S-FeX"/>
                                 <toolbarItem reference="T3Y-H9-fjt"/>
                             </defaultToolbarItems>
                         </toolbar>
                     </window>
                     <connections>
+                        <outlet property="trainCountSlider" destination="wog-90-HIM" id="InB-gy-oc9"/>
+                        <outlet property="trainDatePicker" destination="I48-pb-xbq" id="Htr-N8-6rl"/>
+                        <outlet property="trainSpeedSlider" destination="iBF-k1-OTo" id="9HH-MK-rST"/>
                         <segue destination="yS8-Fc-Cos" kind="relationship" relationship="window.shadowedContentViewController" id="yO9-xt-hlM"/>
                     </connections>
                 </windowController>
                 <customObject id="Lp0-Nt-Hb6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11" y="516"/>
+            <point key="canvasLocation" x="53" y="516"/>
         </scene>
         <!--Train Map View Controller-->
         <scene sceneID="Y51-vN-Pdf">
@@ -684,6 +734,10 @@ Gw
             <point key="canvasLocation" x="37" y="963"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSColumnViewTemplate" width="16" height="10"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="yG2-aC-tTM"/>
         <segue reference="cXo-aB-k2v"/>
